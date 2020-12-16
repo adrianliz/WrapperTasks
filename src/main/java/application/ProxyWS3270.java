@@ -5,6 +5,9 @@ import domain.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringJoiner;
 
 import static java.lang.Thread.sleep;
 
@@ -21,7 +24,7 @@ public class ProxyWS3270 implements Proxy3270Emulator {
 		out = new PrintWriter(ws3270.getOutputStream());
 	}
 
-	private Response3270 syncScreenRead()
+	private Response3270 syncInputRead()
 		throws IOException, InterruptedException {
 
 		StringBuilder buffer = new StringBuilder();
@@ -37,20 +40,50 @@ public class ProxyWS3270 implements Proxy3270Emulator {
 		return new ResponseWS3270(buffer.toString());
 	}
 
-	public boolean connect(String ip, String port) throws IOException, InterruptedException {
-		return syncWrite(ActionWS3270.CONNECT + "(" + ip + ":" + port + ")").success();
+	private Response3270 executeCommand(ActionWS3270 action)
+		throws IOException, InterruptedException {
+
+		out.println(action);
+		out.flush();
+
+		return syncInputRead();
 	}
 
-	public boolean disconnect() throws IOException, InterruptedException {
-		return syncWrite(ActionWS3270.DISCONNECT.toString()).success();
+	private Response3270 executeCommand(ActionWS3270 action, List<String> params)
+		throws IOException, InterruptedException {
+
+		StringJoiner command = new StringJoiner(",", action + "(", ")");
+
+		for (String param : params) {
+			command.add(param);
+		}
+		out.println(command.toString());
+		out.flush();
+
+		return syncInputRead();
+	}
+
+	public Response3270 connect(String ip, String port) throws IOException, InterruptedException {
+		List<String> params = new ArrayList<>();
+		params.add(ip + ":" + port);
+
+		return executeCommand(ActionWS3270.CONNECT, params);
+	}
+
+	public Response3270 disconnect() throws IOException, InterruptedException {
+		return executeCommand(ActionWS3270.DISCONNECT);
 	}
 
 	public Response3270 syncBufferRead(long timeout) throws IOException, InterruptedException {
-		Response3270 response =
-			syncWrite(ActionWS3270.WAIT + "(" + timeout + ", " + ActionWS3270.OUTPUT + ")");
+		List<String> params = new ArrayList<>();
+		params.add(timeout + "");
+		params.add(ActionWS3270.OUTPUT.toString());
+
+		// This WAIT block ws3270 process and this process (because IN stream is block)
+		Response3270 response = executeCommand(ActionWS3270.WAIT, params);
 
 		if (response.success()) {
-			return syncWrite(ActionWS3270.ASCII.toString());
+			return executeCommand(ActionWS3270.ASCII);
 		}
 
 		return response;
@@ -59,14 +92,13 @@ public class ProxyWS3270 implements Proxy3270Emulator {
 	public Response3270 syncWrite(String text)
 		throws IOException, InterruptedException {
 
-		out.println(text + "\n");
-		out.flush();
-
-		return syncScreenRead();
+		List<String> params = new ArrayList<>();
+		params.add(text);
+		return executeCommand(ActionWS3270.STRING, params);
 	}
 
-	public void waitScreen(String indicator, long timeout)
-		throws IOException, InterruptedException, IndicatorNotFoundException {
+	public boolean waitScreen(String indicator, long timeout)
+		throws IOException, InterruptedException {
 
 		int attempts = 0;
 		boolean indicatorFound = false;
@@ -79,12 +111,12 @@ public class ProxyWS3270 implements Proxy3270Emulator {
 			}
 
 			attempts++;
-		} while ((! indicatorFound) && (attempts < MAX_ATTEMPTS_SEARCHING_INDICATOR));
+		} while ((!indicatorFound) && (attempts < MAX_ATTEMPTS_SEARCHING_INDICATOR));
 
-		if (! indicatorFound) throw new IndicatorNotFoundException("Can't found indicator: " + indicator);
+		return indicatorFound;
 	}
 
-	public boolean enter() throws IOException, InterruptedException {
-		return syncWrite(ActionWS3270.ENTER.toString()).success();
+	public Response3270 enter() throws IOException, InterruptedException {
+		return executeCommand(ActionWS3270.ENTER);
 	}
 }

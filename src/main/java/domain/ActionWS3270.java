@@ -6,9 +6,10 @@ public enum ActionWS3270 {
 	DISCONNECT("disconnect"),
 	ENTER("enter"),
 	OUTPUT("output"),
+	STRING("string"),
 	WAIT("wait");
 
-	private String action;
+	private final String action;
 
 	ActionWS3270(String action) {
 		this.action = action;

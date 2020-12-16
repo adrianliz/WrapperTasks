@@ -21,15 +21,16 @@ public class ResponseWS3270 implements Response3270 {
 
 			while ((line = screenReader.readLine()).startsWith(DATA_INDICATOR)) {
 				dataBuilder.append(line);
-				dataBuilder.append(" ");
+				dataBuilder.append("\n");
 			}
 
-			data = dataBuilder.toString().replace(DATA_INDICATOR, "");
+			data = dataBuilder.toString();
 			prompt = line;
 			succesIndicator = SuccesIndicator.getSuccessIndicator(screenReader.readLine());
 		}
 	}
 
+	// TODO: return parse data
 	public String getParsedData() {
 		return data;
 	}

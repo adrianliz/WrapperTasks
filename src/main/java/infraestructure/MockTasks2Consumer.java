@@ -1,14 +1,29 @@
 package infraestructure;
 
+import application.MusicAPI;
 import application.ProxyWS3270;
+import domain.MainframeAPI;
 import domain.Proxy3270Emulator;
 
 public class MockTasks2Consumer {
 	public static void main(String[] args) {
 		try {
 			Proxy3270Emulator proxy = new ProxyWS3270("ws3270");
-			if (proxy.connect("155.210.71.101", "123")) System.out.println("Connected!");
-			if (proxy.disconnect()) System.out.println("Disconnected!");
+			MainframeAPI mainframe = new MusicAPI(proxy);
+
+			if (proxy.connect("155.210.71.101", "123").success()) {
+				System.out.println("Connected!");
+
+				if (mainframe.login("prog", "prog123")) {
+					System.out.println("Login!");
+
+					if (mainframe.logout()) {
+						System.out.println("Logout!");
+					}
+				}
+			}
+
+			if (proxy.disconnect().success()) System.out.println("Disconnected!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
