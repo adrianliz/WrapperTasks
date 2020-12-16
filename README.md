@@ -21,7 +21,7 @@ Práctica 3 de la asignatura de SL
 - P3 -> Diagrama de clases :white_check_mark:
 - P4 -> Implementación
     1. Estructura básica (v1.0.0) :white_check_mark:
-    2. Conectarse y desconectarse (v1.1.0 :white_check_mark:
+    2. Conectarse y desconectarse (v1.1.0) :white_check_mark:
     3. Login y logout (v1.2.0) :white_check_mark:
     4. Ejecucción y exit de tasks2 (v1.3.0)
     5. Nuevo fichero de tareas (v1.4.0)
