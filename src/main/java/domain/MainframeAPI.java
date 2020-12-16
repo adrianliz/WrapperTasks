@@ -1,9 +1,9 @@
 package domain;
 
-import java.io.IOException;
+import domain.exceptions.AuthException;
 
 public interface MainframeAPI {
-	boolean login(String user, String pwd) throws IOException, InterruptedException;
-	boolean logout() throws IOException, InterruptedException;
+	void login(String user, String pwd) throws AuthException;
+	void logout() throws AuthException;
 	boolean executeJob(String jobName);
 }

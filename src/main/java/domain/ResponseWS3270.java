@@ -1,5 +1,7 @@
 package domain;
 
+import domain.enums.SuccesIndicator;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -34,6 +36,8 @@ public class ResponseWS3270 implements Response3270 {
 	public String getParsedData() {
 		return data;
 	}
+
+	public boolean contains(String indicator) { return data.contains(indicator); }
 
 	public boolean success() {
 		return succesIndicator.equals(SuccesIndicator.OK);

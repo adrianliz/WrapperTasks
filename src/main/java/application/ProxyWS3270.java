@@ -1,6 +1,9 @@
 package application;
 
 import domain.*;
+import domain.enums.ActionWS3270;
+import domain.enums.WindowIndicator;
+import domain.exceptions.InvalidScreenException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,10 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
-import static java.lang.Thread.sleep;
-
 public class ProxyWS3270 implements Proxy3270Emulator {
-	private static final int WAIT_INPUT_AVAILABLE = 20; //ms
 	private static final int MAX_ATTEMPTS_SEARCHING_INDICATOR = 10;
 
 	private final InputStream in;
@@ -24,14 +24,10 @@ public class ProxyWS3270 implements Proxy3270Emulator {
 		out = new PrintWriter(ws3270.getOutputStream());
 	}
 
-	private Response3270 syncInputRead()
-		throws IOException, InterruptedException {
-
+	private Response3270 syncInputRead() throws IOException {
 		StringBuilder buffer = new StringBuilder();
 
-		while (in.available() == 0) {
-			sleep(WAIT_INPUT_AVAILABLE);
-		}
+		while (in.available() == 0);
 
 		while (in.available() > 0) {
 			buffer.append((char) in.read());
@@ -40,41 +36,39 @@ public class ProxyWS3270 implements Proxy3270Emulator {
 		return new ResponseWS3270(buffer.toString());
 	}
 
-	private Response3270 executeCommand(ActionWS3270 action)
-		throws IOException, InterruptedException {
-
-		out.println(action);
+	private Response3270 syncOutSend(String text) throws IOException {
+		out.println(text);
 		out.flush();
 
 		return syncInputRead();
 	}
 
-	private Response3270 executeCommand(ActionWS3270 action, List<String> params)
-		throws IOException, InterruptedException {
+	private Response3270 executeCommand(ActionWS3270 action) throws IOException {
+		return syncOutSend(action.toString());
+	}
+
+	private Response3270 executeCommand(ActionWS3270 action, List<String> params) throws IOException {
 
 		StringJoiner command = new StringJoiner(",", action + "(", ")");
 
 		for (String param : params) {
 			command.add(param);
 		}
-		out.println(command.toString());
-		out.flush();
-
-		return syncInputRead();
+		return syncOutSend(command.toString());
 	}
 
-	public Response3270 connect(String ip, String port) throws IOException, InterruptedException {
+	public Response3270 connect(String ip, String port) throws IOException {
 		List<String> params = new ArrayList<>();
 		params.add(ip + ":" + port);
 
 		return executeCommand(ActionWS3270.CONNECT, params);
 	}
 
-	public Response3270 disconnect() throws IOException, InterruptedException {
+	public Response3270 disconnect() throws IOException {
 		return executeCommand(ActionWS3270.DISCONNECT);
 	}
 
-	public Response3270 syncBufferRead(long timeout) throws IOException, InterruptedException {
+	public Response3270 syncBufferRead(long timeout) throws IOException {
 		List<String> params = new ArrayList<>();
 		params.add(timeout + "");
 		params.add(ActionWS3270.OUTPUT.toString());
@@ -89,16 +83,15 @@ public class ProxyWS3270 implements Proxy3270Emulator {
 		return response;
 	}
 
-	public Response3270 syncWrite(String text)
-		throws IOException, InterruptedException {
+	public Response3270 syncWrite(String text) throws IOException {
 
 		List<String> params = new ArrayList<>();
 		params.add(text);
 		return executeCommand(ActionWS3270.STRING, params);
 	}
 
-	public boolean waitScreen(String indicator, long timeout)
-		throws IOException, InterruptedException {
+	public void waitScreen(WindowIndicator indicator, long timeout)
+		throws IOException, InvalidScreenException {
 
 		int attempts = 0;
 		boolean indicatorFound = false;
@@ -107,16 +100,20 @@ public class ProxyWS3270 implements Proxy3270Emulator {
 			Response3270 response = syncBufferRead(timeout);
 
 			if (response.success()) {
-				indicatorFound = response.getParsedData().contains(indicator);
+				indicatorFound = response.getParsedData().contains(indicator.toString());
 			}
 
 			attempts++;
-		} while ((!indicatorFound) && (attempts < MAX_ATTEMPTS_SEARCHING_INDICATOR));
+		} while ((! indicatorFound) && (attempts < MAX_ATTEMPTS_SEARCHING_INDICATOR));
 
-		return indicatorFound;
+		if (! indicatorFound) throw new InvalidScreenException(indicator);
 	}
 
-	public Response3270 enter() throws IOException, InterruptedException {
+	public Response3270 clearFields() throws IOException {
+		return executeCommand(ActionWS3270.ERASE_INPUT);
+	}
+
+	public Response3270 enter() throws IOException {
 		return executeCommand(ActionWS3270.ENTER);
 	}
 }

@@ -14,16 +14,13 @@ public class MockTasks2Consumer {
 			if (proxy.connect("155.210.71.101", "123").success()) {
 				System.out.println("Connected!");
 
-				if (mainframe.login("prog", "prog123")) {
-					System.out.println("Login!");
-
-					if (mainframe.logout()) {
-						System.out.println("Logout!");
-					}
-				}
+				mainframe.login("prog", "prog123");
+				System.out.println("Login!");
+				mainframe.logout();
+				System.out.println("Logout!");
 			}
 
-			if (proxy.disconnect().success()) System.out.println("Disconnected!");
+			if (proxy.disconnect().success()) System.out.println("Disconnect!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -1,10 +1,11 @@
-package domain;
+package domain.enums;
 
 public enum ActionWS3270 {
 	ASCII("ascii"),
 	CONNECT("connect"),
 	DISCONNECT("disconnect"),
 	ENTER("enter"),
+	ERASE_INPUT("eraseinput"),
 	OUTPUT("output"),
 	STRING("string"),
 	WAIT("wait");
