@@ -116,18 +116,15 @@ public class LoginTest {
 		mainframe.login(login, pwd);
 	}
 
-	@Test
+	@Test()
 	public void shouldThrowUserIdUnauthorized() {
 		String login = "pepe";
 		String pwd = "pepe";
 
 		MainframeAPI mainframe = new MusicAPI(new Fake3270Emulator(userIdUnauthorized));
 
-		try {
-			mainframe.login(login, pwd);
-		} catch (AuthException ex) {
-			assertEquals(WindowIndicator.MUSIC_USERID_UNAUTHORIZED.toString(), ex.getMessage());
-		}
+		Throwable ex = assertThrows(AuthException.class, () -> mainframe.login(login, pwd));
+		assertEquals(WindowIndicator.MUSIC_USERID_UNAUTHORIZED.toString(), ex.getMessage());
 	}
 	
 	@Test
@@ -137,11 +134,8 @@ public class LoginTest {
 
 		MainframeAPI mainframe = new MusicAPI(new Fake3270Emulator(passwordIncorrect));
 
-		try {
-			mainframe.login(login, pwd);
-		} catch (AuthException ex) {
-			assertEquals(WindowIndicator.MUSIC_PWD_INCORRECT.toString(), ex.getMessage());
-		}
+		Throwable ex = assertThrows(AuthException.class, () -> mainframe.login(login, pwd));
+		assertEquals(WindowIndicator.MUSIC_PWD_INCORRECT.toString(), ex.getMessage());
 	}
 
 	@Test
@@ -151,10 +145,7 @@ public class LoginTest {
 
 		MainframeAPI mainframe = new MusicAPI(new Fake3270Emulator(userIdInUse));
 
-		try {
-			mainframe.login(login, pwd);
-		} catch (AuthException ex) {
-			assertEquals(WindowIndicator.MUSIC_USERID_IN_USE.toString(), ex.getMessage());
-		}
+		Throwable ex = assertThrows(AuthException.class, () -> mainframe.login(login, pwd));
+		assertEquals(WindowIndicator.MUSIC_USERID_IN_USE.toString(), ex.getMessage());
 	}
 }
