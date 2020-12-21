@@ -1,9 +1,10 @@
-package MusicTestSuit;
+package UnityTestSuit;
 
 import application.MusicAPI;
 import domain.MainframeAPI;
 import domain.Response3270;
-import domain.enums.WindowIndicator;
+import domain.enums.ErrorMessage;
+import domain.enums.ScreenIndicator;
 import domain.exceptions.AuthException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -48,7 +49,7 @@ public class LoginTest {
 
 			@Override
 			public boolean contains(String indicator) {
-				return indicator.equals(WindowIndicator.MUSIC_USERID_UNAUTHORIZED.toString());
+				return indicator.equals(ScreenIndicator.MUSIC_USERID_UNAUTHORIZED.toString());
 			}
 
 			@Override
@@ -70,7 +71,7 @@ public class LoginTest {
 
 			@Override
 			public boolean contains(String indicator) {
-				return indicator.equals(WindowIndicator.MUSIC_PWD_INCORRECT.toString());
+				return indicator.equals(ScreenIndicator.MUSIC_PWD_INCORRECT.toString());
 			}
 
 			@Override
@@ -92,7 +93,7 @@ public class LoginTest {
 
 			@Override
 			public boolean contains(String indicator) {
-				return indicator.equals(WindowIndicator.MUSIC_USERID_IN_USE.toString());
+				return indicator.equals(ScreenIndicator.MUSIC_USERID_IN_USE.toString());
 			}
 
 			@Override
@@ -124,7 +125,7 @@ public class LoginTest {
 		MainframeAPI mainframe = new MusicAPI(new Fake3270Emulator(userIdUnauthorized));
 
 		Throwable ex = assertThrows(AuthException.class, () -> mainframe.login(login, pwd));
-		assertEquals(WindowIndicator.MUSIC_USERID_UNAUTHORIZED.toString(), ex.getMessage());
+		assertEquals(ErrorMessage.USERID_UNAUTHORIZED.toString(), ex.getMessage());
 	}
 	
 	@Test
@@ -135,7 +136,7 @@ public class LoginTest {
 		MainframeAPI mainframe = new MusicAPI(new Fake3270Emulator(passwordIncorrect));
 
 		Throwable ex = assertThrows(AuthException.class, () -> mainframe.login(login, pwd));
-		assertEquals(WindowIndicator.MUSIC_PWD_INCORRECT.toString(), ex.getMessage());
+		assertEquals(ErrorMessage.PWD_ERROR.toString(), ex.getMessage());
 	}
 
 	@Test
@@ -146,6 +147,6 @@ public class LoginTest {
 		MainframeAPI mainframe = new MusicAPI(new Fake3270Emulator(userIdInUse));
 
 		Throwable ex = assertThrows(AuthException.class, () -> mainframe.login(login, pwd));
-		assertEquals(WindowIndicator.MUSIC_USERID_IN_USE.toString(), ex.getMessage());
+		assertEquals(ErrorMessage.USERID_IN_USE.toString(), ex.getMessage());
 	}
 }

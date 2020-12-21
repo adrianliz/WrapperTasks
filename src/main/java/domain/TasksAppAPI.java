@@ -10,5 +10,5 @@ public interface TasksAppAPI {
 	List<Task> searchTasks(Calendar date);
 	List<Task> listTasks();
 	void saveTasks();
-	void exit();
+	boolean exit();
 }

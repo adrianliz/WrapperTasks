@@ -2,20 +2,34 @@ package infraestructure;
 
 import application.MusicAPI;
 import application.ProxyWS3270;
+import application.Tasks2API;
 import domain.MainframeAPI;
 import domain.Proxy3270Emulator;
+import domain.TasksAppAPI;
+import domain.enums.Job;
 
 public class MockTasks2Consumer {
 	public static void main(String[] args) {
+		Proxy3270Emulator proxy = null;
 		try {
-			Proxy3270Emulator proxy = new ProxyWS3270("ws3270");
+			proxy = new ProxyWS3270("ws3270");
 			MainframeAPI mainframe = new MusicAPI(proxy);
+			TasksAppAPI tasksApp = new Tasks2API(proxy, mainframe);
 
 			if (proxy.connect("155.210.71.101", "123").success()) {
 				System.out.println("Connected!");
 
 				mainframe.login("prog", "prog123");
 				System.out.println("Login!");
+
+				 if (mainframe.executeJob(Job.TASKS2)) {
+					 System.out.println("Executing tasks2!");
+
+					 if (tasksApp.exit()) {
+						 System.out.println("Exit tasks2!");
+					 }
+				 }
+
 				mainframe.logout();
 				System.out.println("Logout!");
 			}
@@ -23,6 +37,14 @@ public class MockTasks2Consumer {
 			if (proxy.disconnect().success()) System.out.println("Disconnect!");
 		} catch (Exception e) {
 			e.printStackTrace();
+
+			if (proxy != null) {
+				try {
+					if (proxy.disconnect().success()) System.out.println("Disconnect!");
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+			}
 		}
 	}
 }

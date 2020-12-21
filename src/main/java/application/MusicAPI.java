@@ -2,38 +2,38 @@ package application;
 
 import domain.MainframeAPI;
 import domain.Proxy3270Emulator;
-import domain.enums.WindowIndicator;
+import domain.enums.ErrorMessage;
+import domain.enums.Job;
+import domain.enums.ScreenIndicator;
 import domain.exceptions.InvalidScreenException;
 import domain.exceptions.AuthException;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MusicAPI implements MainframeAPI {
-	private static final Map<String, WindowIndicator> appIndicator = new HashMap<>();
-	static {appIndicator.put("tasks2.job", WindowIndicator.TASKS2_MAIN_WINDOW);}
+	private static final Map<Job, ScreenIndicator> appIndicator = new EnumMap<>(Job.class);
+	static {appIndicator.put(Job.TASKS2, ScreenIndicator.TASKS2_MAIN_WINDOW);}
 
-	private static final long DEFAULT_TIMEOUT = 5; //s
 	private static final String OFF = "off";
-	private static final String INVALID_SCREEN_ERROR = "Invalid screen state reached";
-	private static final String IO_ERROR = "An IO error succeeded";
 
+	private final List<Job> jobsExecuting;
 	private final Proxy3270Emulator emulator;
 
 	public MusicAPI(Proxy3270Emulator emulator) {
 		this.emulator = emulator;
+		jobsExecuting = new ArrayList<>();
 	}
 
-	private void writeLoginField(String field, WindowIndicator errorIndicator)
+	private void writeLoginField(String field, ScreenIndicator errorIndicator, ErrorMessage message)
 		throws IOException, AuthException {
 
 		emulator.syncWrite(field);
 		emulator.enter();
 
-		if (emulator.syncBufferRead(DEFAULT_TIMEOUT).contains(errorIndicator.toString())) {
+		if (emulator.syncBufferRead().contains(errorIndicator.toString())) {
 			emulator.clearFields();
-			throw new AuthException(errorIndicator.toString());
+			throw new AuthException(message);
 		}
 	}
 
@@ -42,22 +42,24 @@ public class MusicAPI implements MainframeAPI {
 	public void login(String user, String pwd) throws AuthException {
 		try {
 			emulator.enter();
-			emulator.waitScreen(WindowIndicator.MUSIC_LOGIN_WINDOW, DEFAULT_TIMEOUT);
+			emulator.waitScreen(ScreenIndicator.MUSIC_LOGIN_WINDOW);
 
-			writeLoginField(user, WindowIndicator.MUSIC_USERID_UNAUTHORIZED);
-			writeLoginField(pwd, WindowIndicator.MUSIC_PWD_INCORRECT);
+			writeLoginField(user, ScreenIndicator.MUSIC_USERID_UNAUTHORIZED,
+											ErrorMessage.USERID_UNAUTHORIZED);
+			writeLoginField(pwd, ScreenIndicator.MUSIC_PWD_INCORRECT,
+										  ErrorMessage.PWD_ERROR);
 
-			if (emulator.syncBufferRead(DEFAULT_TIMEOUT)
-									.contains(WindowIndicator.MUSIC_USERID_IN_USE.toString())) {
-				throw new AuthException(WindowIndicator.MUSIC_USERID_IN_USE.toString());
+			if (emulator.syncBufferRead()
+									.contains(ScreenIndicator.MUSIC_USERID_IN_USE.toString())) {
+				throw new AuthException(ErrorMessage.USERID_IN_USE);
 			}
 
 			emulator.enter();
-			emulator.waitScreen(WindowIndicator.MUSIC_COMMAND_LINE, DEFAULT_TIMEOUT);
+			emulator.waitScreen(ScreenIndicator.MUSIC_COMMAND_LINE);
 		} catch (InvalidScreenException ex) {
-			throw new AuthException(INVALID_SCREEN_ERROR);
+			throw new AuthException(ErrorMessage.INVALID_SCREEN);
 		} catch (IOException ex) {
-			throw	new AuthException(IO_ERROR);
+			throw	new AuthException(ErrorMessage.IO);
 		}
 	}
 
@@ -66,27 +68,39 @@ public class MusicAPI implements MainframeAPI {
 		try {
 			emulator.syncWrite(OFF);
 			emulator.enter();
-			emulator.waitScreen(WindowIndicator.MUSIC_MAIN_WINDOW, DEFAULT_TIMEOUT);
+			emulator.waitScreen(ScreenIndicator.MUSIC_MAIN_WINDOW);
 		} catch (InvalidScreenException ex) {
-			throw new AuthException(INVALID_SCREEN_ERROR);
+			throw new AuthException(ErrorMessage.INVALID_SCREEN);
 		} catch (IOException ex) {
-			throw new AuthException(IO_ERROR);
+			throw new AuthException(ErrorMessage.IO);
 		}
 	}
 
 	@Override
-	public boolean executeJob(String jobName) {
+	public boolean executeJob(Job job) {
 		try {
-			emulator.syncWrite(jobName);
+			emulator.syncWrite(job.toString());
 			emulator.enter();
-			emulator.waitScreen(appIndicator.get(jobName), DEFAULT_TIMEOUT);
+			emulator.waitScreen(appIndicator.get(job));
 
-			return true;
+			return jobsExecuting.add(job);
 		} catch (InvalidScreenException ex) {
-			System.err.println(INVALID_SCREEN_ERROR);
+			System.err.println(ErrorMessage.INVALID_SCREEN);
+			System.err.println(ex.getMessage());
 		} catch (IOException ex) {
-			System.err.println(IO_ERROR);
+			System.err.println(ErrorMessage.IO);
 		}
+
 		return false;
+	}
+
+	@Override
+	public boolean finishJob(Job job) {
+		return jobsExecuting.remove(job);
+	}
+
+	@Override
+	public boolean isExecutingJob(Job job) {
+		return jobsExecuting.contains(job);
 	}
 }

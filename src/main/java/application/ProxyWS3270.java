@@ -2,7 +2,7 @@ package application;
 
 import domain.*;
 import domain.enums.ActionWS3270;
-import domain.enums.WindowIndicator;
+import domain.enums.ScreenIndicator;
 import domain.exceptions.InvalidScreenException;
 
 import java.io.IOException;
@@ -14,6 +14,7 @@ import java.util.StringJoiner;
 
 public class ProxyWS3270 implements Proxy3270Emulator {
 	private static final int MAX_ATTEMPTS_SEARCHING_INDICATOR = 10;
+	private static final long DEFAULT_TIMEOUT = 5; //s
 
 	private final InputStream in;
 	private final PrintWriter out;
@@ -83,6 +84,11 @@ public class ProxyWS3270 implements Proxy3270Emulator {
 		return response;
 	}
 
+	@Override
+	public Response3270 syncBufferRead() throws IOException {
+		return syncBufferRead(DEFAULT_TIMEOUT);
+	}
+
 	public Response3270 syncWrite(String text) throws IOException {
 
 		List<String> params = new ArrayList<>();
@@ -90,7 +96,7 @@ public class ProxyWS3270 implements Proxy3270Emulator {
 		return executeCommand(ActionWS3270.STRING, params);
 	}
 
-	public void waitScreen(WindowIndicator indicator, long timeout)
+	public void waitScreen(ScreenIndicator indicator, long timeout)
 		throws IOException, InvalidScreenException {
 
 		int attempts = 0;
@@ -107,6 +113,11 @@ public class ProxyWS3270 implements Proxy3270Emulator {
 		} while ((! indicatorFound) && (attempts < MAX_ATTEMPTS_SEARCHING_INDICATOR));
 
 		if (! indicatorFound) throw new InvalidScreenException(indicator);
+	}
+
+	@Override
+	public void waitScreen(ScreenIndicator indicator) throws IOException, InvalidScreenException {
+		waitScreen(indicator, DEFAULT_TIMEOUT);
 	}
 
 	public Response3270 clearFields() throws IOException {
