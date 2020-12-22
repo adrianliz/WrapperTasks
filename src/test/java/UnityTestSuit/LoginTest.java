@@ -109,12 +109,12 @@ public class LoginTest {
 	}
 
 	@Test
-	public void shouldLogin() throws AuthException {
+	public void shouldLogin() {
 		String login = "pepe";
 		String pwd = "pepe";
 
 		MainframeAPI mainframe = new MusicAPI(new Fake3270Emulator(defaultResponse));
-		mainframe.login(login, pwd);
+		assertDoesNotThrow(() -> mainframe.login(login, pwd));
 	}
 
 	@Test()
@@ -136,7 +136,7 @@ public class LoginTest {
 		MainframeAPI mainframe = new MusicAPI(new Fake3270Emulator(passwordIncorrect));
 
 		Throwable ex = assertThrows(AuthException.class, () -> mainframe.login(login, pwd));
-		assertEquals(ErrorMessage.PWD_ERROR.toString(), ex.getMessage());
+		assertEquals(ErrorMessage.PWD_INCORRECT.toString(), ex.getMessage());
 	}
 
 	@Test

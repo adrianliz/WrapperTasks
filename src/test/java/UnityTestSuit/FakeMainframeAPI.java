@@ -8,10 +8,20 @@ import java.util.List;
 
 public class FakeMainframeAPI implements MainframeAPI {
 	private final List<Job> jobsExecuting;
+	private final boolean finishJobFail;
 
 	FakeMainframeAPI(Job job) {
 		jobsExecuting = new ArrayList<>();
 		jobsExecuting.add(job);
+
+		finishJobFail = false;
+	}
+
+	FakeMainframeAPI(Job job, boolean finishJobFail) {
+		jobsExecuting = new ArrayList<>();
+		jobsExecuting.add(job);
+
+		this.finishJobFail = finishJobFail;
 	}
 
 	@Override
@@ -25,13 +35,13 @@ public class FakeMainframeAPI implements MainframeAPI {
 	}
 
 	@Override
-	public boolean executeJob(Job job) {
-		return jobsExecuting.add(job);
+	public void executeJob(Job job) {
+		jobsExecuting.add(job);
 	}
 
 	@Override
 	public boolean finishJob(Job job) {
-		return jobsExecuting.remove(job);
+		return ! finishJobFail;
 	}
 
 	@Override

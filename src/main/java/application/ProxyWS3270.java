@@ -74,7 +74,7 @@ public class ProxyWS3270 implements Proxy3270Emulator {
 		params.add(timeout + "");
 		params.add(ActionWS3270.OUTPUT.toString());
 
-		// This WAIT block ws3270 process and this process (because IN stream is block)
+		// This WAIT blocks ws3270 process and this process (because IN stream is blocking)
 		Response3270 response = executeCommand(ActionWS3270.WAIT, params);
 
 		if (response.success()) {
@@ -97,7 +97,7 @@ public class ProxyWS3270 implements Proxy3270Emulator {
 	}
 
 	public void waitScreen(ScreenIndicator indicator, long timeout)
-		throws IOException, InvalidScreenException {
+		throws InvalidScreenException, IOException {
 
 		int attempts = 0;
 		boolean indicatorFound = false;

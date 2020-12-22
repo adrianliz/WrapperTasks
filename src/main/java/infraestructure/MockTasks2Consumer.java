@@ -22,17 +22,18 @@ public class MockTasks2Consumer {
 				mainframe.login("prog", "prog123");
 				System.out.println("Login!");
 
-				 if (mainframe.executeJob(Job.TASKS2)) {
-					 System.out.println("Executing tasks2!");
+				mainframe.executeJob(Job.TASKS2);
+				System.out.println("Executing tasks2!");
 
-					 if (tasksApp.exit()) {
-						 System.out.println("Exit tasks2!");
-					 }
-				 }
+				tasksApp.newTaskFile();
+				System.out.println("New task file!");
 
-				mainframe.logout();
-				System.out.println("Logout!");
+				tasksApp.exit();
+				System.out.println("Exit tasks2!");
 			}
+
+			mainframe.logout();
+			System.out.println("Logout!");
 
 			if (proxy.disconnect().success()) System.out.println("Disconnect!");
 		} catch (Exception e) {

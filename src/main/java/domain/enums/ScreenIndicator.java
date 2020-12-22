@@ -8,6 +8,8 @@ public enum ScreenIndicator {
 	MUSIC_USERID_IN_USE("Userid in use"),
 	MUSIC_COMMAND_LINE("Full Screen Interface for MUSIC"),
 	TASKS2_MAIN_WINDOW("TASK MANAGEMENT 2.0 BY TURO-SL SOFT"),
+	TASKS2_NEW_TASK_FILE_WINDOW("**NEW TASK FILE**"),
+	TASKS2_NEW_TASK_FILE_CREATED("NEW TASK FILE HAS BEEN CREATED"),
 	TASKS2_BYE_WINDOW("**EXIT**");
 
 	private final String indicator;

@@ -12,13 +12,10 @@ import java.io.IOException;
 import java.util.*;
 
 public class MusicAPI implements MainframeAPI {
-	private static final Map<Job, ScreenIndicator> appIndicator = new EnumMap<>(Job.class);
-	static {appIndicator.put(Job.TASKS2, ScreenIndicator.TASKS2_MAIN_WINDOW);}
-
 	private static final String OFF = "off";
 
-	private final List<Job> jobsExecuting;
 	private final Proxy3270Emulator emulator;
+	private final List<Job> jobsExecuting;
 
 	public MusicAPI(Proxy3270Emulator emulator) {
 		this.emulator = emulator;
@@ -37,7 +34,6 @@ public class MusicAPI implements MainframeAPI {
 		}
 	}
 
-	// probar si cuando se hace throw se continua la ejecuccion
 	@Override
 	public void login(String user, String pwd) throws AuthException {
 		try {
@@ -47,7 +43,7 @@ public class MusicAPI implements MainframeAPI {
 			writeLoginField(user, ScreenIndicator.MUSIC_USERID_UNAUTHORIZED,
 											ErrorMessage.USERID_UNAUTHORIZED);
 			writeLoginField(pwd, ScreenIndicator.MUSIC_PWD_INCORRECT,
-										  ErrorMessage.PWD_ERROR);
+											ErrorMessage.PWD_INCORRECT);
 
 			if (emulator.syncBufferRead()
 									.contains(ScreenIndicator.MUSIC_USERID_IN_USE.toString())) {
@@ -59,7 +55,7 @@ public class MusicAPI implements MainframeAPI {
 		} catch (InvalidScreenException ex) {
 			throw new AuthException(ErrorMessage.INVALID_SCREEN);
 		} catch (IOException ex) {
-			throw	new AuthException(ErrorMessage.IO);
+			throw new AuthException(ErrorMessage.IO);
 		}
 	}
 
@@ -77,21 +73,12 @@ public class MusicAPI implements MainframeAPI {
 	}
 
 	@Override
-	public boolean executeJob(Job job) {
-		try {
-			emulator.syncWrite(job.toString());
-			emulator.enter();
-			emulator.waitScreen(appIndicator.get(job));
+	public void executeJob(Job job) throws InvalidScreenException, IOException {
+		emulator.syncWrite(job.toString());
+		emulator.enter();
+		emulator.waitScreen(job.indicator());
 
-			return jobsExecuting.add(job);
-		} catch (InvalidScreenException ex) {
-			System.err.println(ErrorMessage.INVALID_SCREEN);
-			System.err.println(ex.getMessage());
-		} catch (IOException ex) {
-			System.err.println(ErrorMessage.IO);
-		}
-
-		return false;
+		jobsExecuting.add(job);
 	}
 
 	@Override

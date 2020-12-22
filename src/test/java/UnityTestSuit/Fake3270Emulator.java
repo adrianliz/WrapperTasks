@@ -3,14 +3,21 @@ package UnityTestSuit;
 import domain.Proxy3270Emulator;
 import domain.Response3270;
 import domain.enums.ScreenIndicator;
+import domain.exceptions.InvalidScreenException;
 
 public class Fake3270Emulator implements Proxy3270Emulator {
 	private final Response3270 defaultResponse;
+	private final boolean waitScreenFail;
 
-	public Fake3270Emulator(Response3270 defaultResponse) {
+	Fake3270Emulator(Response3270 defaultResponse) {
 		this.defaultResponse = defaultResponse;
+		waitScreenFail = false;
 	}
-	public Fake3270Emulator() { this.defaultResponse = null; }
+
+	Fake3270Emulator(boolean waitScreenFail) {
+		this.waitScreenFail = waitScreenFail;
+		defaultResponse = null;
+	}
 
 	@Override
 	public Response3270 connect(String ip, String port) {
@@ -38,11 +45,13 @@ public class Fake3270Emulator implements Proxy3270Emulator {
 	}
 
 	@Override
-	public void waitScreen(ScreenIndicator indicator, long timeout) {}
+	public void waitScreen(ScreenIndicator indicator, long timeout) throws InvalidScreenException {
+		if (waitScreenFail) throw new InvalidScreenException(null);
+	}
 
 	@Override
-	public void waitScreen(ScreenIndicator indicator) {
-
+	public void waitScreen(ScreenIndicator indicator) throws InvalidScreenException {
+		waitScreen(indicator, 0);
 	}
 
 	@Override

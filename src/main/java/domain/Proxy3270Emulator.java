@@ -11,8 +11,8 @@ public interface Proxy3270Emulator {
 	Response3270 syncBufferRead(long timeout) throws IOException;
 	Response3270 syncBufferRead() throws IOException;
 	Response3270 syncWrite(String text) throws IOException;
-	void waitScreen(ScreenIndicator indicator, long timeout) throws IOException, InvalidScreenException;
-	void waitScreen(ScreenIndicator indicator) throws IOException, InvalidScreenException;
+	void waitScreen(ScreenIndicator indicator, long timeout) throws InvalidScreenException, IOException;
+	void waitScreen(ScreenIndicator indicator) throws InvalidScreenException, IOException;
 	Response3270 enter() throws IOException;
 	Response3270 clearFields() throws IOException;
 }

@@ -9,6 +9,7 @@ import domain.enums.Job;
 import domain.enums.ScreenIndicator;
 import domain.enums.Tasks2Option;
 import domain.exceptions.InvalidScreenException;
+import domain.exceptions.TasksAppException;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -23,8 +24,29 @@ public class Tasks2API implements TasksAppAPI {
 		this.mainframe = mainframe;
 	}
 
-	public void newTaskFile() {
+	private void validateTasks2Running() throws TasksAppException {
+		if (! mainframe.isExecutingJob(Job.TASKS2)) {
+			throw new TasksAppException(Job.TASKS2, ErrorMessage.JOB_NOT_RUNNING);
+		}
+	}
 
+	public void newTaskFile() throws TasksAppException {
+		validateTasks2Running();
+
+		try {
+			emulator.syncWrite(Tasks2Option.NEW_TASK_FILE.toString());
+			emulator.enter();
+			emulator.waitScreen(ScreenIndicator.TASKS2_NEW_TASK_FILE_WINDOW);
+			emulator.syncWrite(Tasks2Option.YES.toString());
+			emulator.enter();
+			emulator.waitScreen(ScreenIndicator.TASKS2_NEW_TASK_FILE_CREATED);
+			emulator.enter();
+			emulator.waitScreen(ScreenIndicator.TASKS2_MAIN_WINDOW);
+		} catch (InvalidScreenException ex) {
+			throw new TasksAppException(Job.TASKS2, ErrorMessage.INVALID_SCREEN);
+		} catch (IOException ex) {
+			throw new TasksAppException(Job.TASKS2, ErrorMessage.IO);
+		}
 	}
 
 	public boolean addTask(Task task) {
@@ -47,24 +69,23 @@ public class Tasks2API implements TasksAppAPI {
 
 	}
 
-	public boolean exit() {
-		try {
-			if (mainframe.isExecutingJob(Job.TASKS2)) {
-				emulator.syncWrite(Tasks2Option.EXIT.toString());
-				emulator.enter();
-				emulator.waitScreen(ScreenIndicator.TASKS2_BYE_WINDOW);
-				emulator.enter();
-				emulator.waitScreen(ScreenIndicator.MUSIC_COMMAND_LINE);
+	public void exit() throws TasksAppException {
+		validateTasks2Running();
 
-				return mainframe.finishJob(Job.TASKS2);
+		try {
+			emulator.syncWrite(Tasks2Option.EXIT.toString());
+			emulator.enter();
+			emulator.waitScreen(ScreenIndicator.TASKS2_BYE_WINDOW);
+			emulator.enter();
+			emulator.waitScreen(ScreenIndicator.MUSIC_COMMAND_LINE);
+
+			if (! mainframe.finishJob(Job.TASKS2)) {
+				throw new TasksAppException(Job.TASKS2, ErrorMessage.JOB_NOT_FINISHED);
 			}
 		} catch (InvalidScreenException ex) {
-			System.err.println(ErrorMessage.INVALID_SCREEN);
-			System.err.println(ex.getMessage());
+			throw new TasksAppException(Job.TASKS2, ErrorMessage.INVALID_SCREEN);
 		} catch (IOException ex) {
-			System.err.println(ErrorMessage.IO);
+			throw new TasksAppException(Job.TASKS2, ErrorMessage.IO);
 		}
-
-		return false;
 	}
 }

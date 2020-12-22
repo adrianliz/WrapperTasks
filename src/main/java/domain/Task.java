@@ -15,6 +15,7 @@ public class Task {
 		this.date = date;
 	}
 
+	// probablemente sea mejor que el mainframe nos diga cuando no es válida
 	boolean isValid(int maxNameLength, int maxDescriptionLength) {
 		return ((name.length() <= maxNameLength) &&
 						(description.length() <= maxDescriptionLength));

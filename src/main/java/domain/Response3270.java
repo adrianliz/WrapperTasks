@@ -4,5 +4,5 @@ public interface Response3270 {
 	String getParsedData();
 	boolean contains(String indicator);
 	boolean success();
-	boolean isConnected();
+	boolean isConnected(); //probablemente no se llegue a usar
 }
