@@ -25,8 +25,8 @@ public class MockTasks2Consumer {
 				mainframe.executeJob(Job.TASKS2);
 				System.out.println("Executing tasks2!");
 
-				tasksApp.newTaskFile();
-				System.out.println("New task file!");
+				tasksApp.removeTask(1000000);
+				System.out.println("Task removed!");
 
 				tasksApp.exit();
 				System.out.println("Exit tasks2!");

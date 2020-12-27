@@ -25,9 +25,9 @@ Práctica 3 de la asignatura de SL
     3. Login y logout (v1.2.0) :white_check_mark:
     4. Ejecucción y exit de tasks2 (v1.3.0) :white_check_mark:
     5. Nuevo fichero de tareas (v1.4.0) :white_check_mark:
-    6. Añadir tarea (v1.5.0)
-    7. Eliminar tarea (v1.6.0)
-    8. Guardar tareas (v1.7.0)
+    6. Añadir tarea (v1.5.0) :white_check_mark:
+    7. Eliminar tarea (v1.6.0) :white_check_mark:
+    8. Guardar tareas (v1.7.0) :white_check_mark:
     9. Listar tareas (v1.8.0)
     10. Buscar tareas (v1.9.0)
     11. Sin definir (v2.0.0)
