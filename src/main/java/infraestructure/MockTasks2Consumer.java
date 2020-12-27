@@ -5,8 +5,12 @@ import application.ProxyWS3270;
 import application.Tasks2API;
 import domain.MainframeAPI;
 import domain.Proxy3270Emulator;
+import domain.Task;
 import domain.TasksAppAPI;
 import domain.enums.Job;
+
+import java.text.ParseException;
+import java.util.Scanner;
 
 public class MockTasks2Consumer {
 	public static void main(String[] args) {
@@ -16,7 +20,7 @@ public class MockTasks2Consumer {
 			MainframeAPI mainframe = new MusicAPI(proxy);
 			TasksAppAPI tasksApp = new Tasks2API(proxy, mainframe);
 
-			if (proxy.connect("155.210.71.101", "123").success()) {
+			if (proxy.connect("155.210.71.101", "623").success()) {
 				System.out.println("Connected!");
 
 				mainframe.login("prog", "prog123");
@@ -25,8 +29,11 @@ public class MockTasks2Consumer {
 				mainframe.executeJob(Job.TASKS2);
 				System.out.println("Executing tasks2!");
 
-				tasksApp.removeTask(1000000);
-				System.out.println("Task removed!");
+        for (Task t: tasksApp.listTasks()) {
+          System.out.println(t);
+				}
+
+				System.out.println("Tasks listed!");
 
 				tasksApp.exit();
 				System.out.println("Exit tasks2!");

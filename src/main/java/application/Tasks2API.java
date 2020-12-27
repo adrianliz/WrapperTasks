@@ -8,10 +8,17 @@ import domain.enums.Tasks2Option;
 import domain.exceptions.InvalidScreenException;
 import domain.exceptions.TasksAppException;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Tasks2API implements TasksAppAPI {
   private final Proxy3270Emulator emulator;
@@ -107,10 +114,8 @@ public class Tasks2API implements TasksAppAPI {
       emulator.enter();
       emulator.waitScreen(ScreenIndicator.TASKS2_REMOVE_TASK_WINDOW);
 
-      writeTaskField(
-          String.valueOf(idTask),
-          ScreenIndicator.TASKS2_TASK_NOT_FOUND,
-          ErrorMessage.TASK_NOT_FOUND);
+      writeTaskField(String.valueOf(idTask), ScreenIndicator.TASKS2_TASK_NOT_FOUND,
+                     ErrorMessage.TASK_NOT_FOUND);
 
       emulator.waitScreen(ScreenIndicator.TASKS2_CONFIRMATION);
       emulator.syncWrite(Tasks2Option.YES.toString());
@@ -129,8 +134,44 @@ public class Tasks2API implements TasksAppAPI {
     return null;
   }
 
-  public List<Task> listTasks() {
-    return null;
+  public List<Task> listTasks() throws TasksAppException {
+    validateTasks2Running();
+    List<Task> tasks = new ArrayList<>();
+
+    try {
+      emulator.syncWrite(Tasks2Option.LIST_TASKS.toString());
+      emulator.enter();
+      emulator.waitScreen(ScreenIndicator.TASKS2_LIST_TASKS_WINDOW);
+
+      StringBuilder builder = new StringBuilder();
+      builder.append(emulator.syncBufferRead().getParsedData()
+        .replace(ScreenIndicator.TASKS2_LIST_TASKS_WINDOW.toString(), ""));
+
+      while (emulator.syncBufferRead().contains("More")) {
+        emulator.enter();
+        builder.append(emulator.syncBufferRead().getParsedData()
+          .replace(ScreenIndicator.TASKS2_LIST_TASKS_WINDOW.toString(), ""));
+      }
+
+      String[] rawTasks = builder.toString().split("TASK");
+      for (int i = 0; i < rawTasks.length; i++) {
+        System.out.println(rawTasks[i]);
+      }
+
+      for (int i = 1; i < rawTasks.length; i++) {
+        tasks.add(new Task(new Scanner(rawTasks[i])));
+      }
+
+      emulator.enter();
+    } catch (InvalidScreenException ex) {
+      throw new TasksAppException(Job.TASKS2, ErrorMessage.INVALID_SCREEN);
+    } catch (IOException ex) {
+      throw new TasksAppException(Job.TASKS2, ErrorMessage.IO);
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    return tasks;
   }
 
   public void saveTasks() throws TasksAppException {
