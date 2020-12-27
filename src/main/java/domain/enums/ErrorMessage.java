@@ -4,6 +4,8 @@ public enum ErrorMessage {
 	USERID_UNAUTHORIZED("Error: UserID is unauthorized"),
 	PWD_INCORRECT("Error: Password incorrect"),
 	USERID_IN_USE("Error: UserID is in use"),
+	TASK_NOT_FOUND("Error: Task not found"),
+	TASK_NUMBER_REPEATED("Error: Task number repeated"),
 	JOB_NOT_RUNNING("Error: Job isn't running"),
 	JOB_NOT_FINISHED("Error: Can't finish job"),
 	INVALID_SCREEN("Error: Invalid screen state reached"),

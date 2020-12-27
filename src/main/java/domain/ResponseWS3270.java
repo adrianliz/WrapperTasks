@@ -1,6 +1,6 @@
 package domain;
 
-import domain.enums.SuccesIndicator;
+import domain.enums.SuccessIndicator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +12,7 @@ public class ResponseWS3270 implements Response3270 {
 
 	private String data;
 	private String prompt;
-	private SuccesIndicator succesIndicator;
+	private SuccessIndicator successIndicator;
 
 	public ResponseWS3270(String rawResponse) throws IOException{
 		if (rawResponse != null) {
@@ -28,7 +28,7 @@ public class ResponseWS3270 implements Response3270 {
 
 			data = dataBuilder.toString();
 			prompt = line;
-			succesIndicator = SuccesIndicator.getSuccessIndicator(screenReader.readLine());
+			successIndicator = SuccessIndicator.getSuccessIndicator(screenReader.readLine());
 		}
 	}
 
@@ -40,7 +40,7 @@ public class ResponseWS3270 implements Response3270 {
 	public boolean contains(String indicator) { return data.contains(indicator); }
 
 	public boolean success() {
-		return succesIndicator.equals(SuccesIndicator.OK);
+		return successIndicator.equals(SuccessIndicator.OK);
 	}
 
 	public boolean isConnected() {
