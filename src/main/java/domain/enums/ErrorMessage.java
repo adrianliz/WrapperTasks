@@ -8,6 +8,7 @@ public enum ErrorMessage {
   TASK_NUMBER_REPEATED("Error: Task number repeated"),
   TASK_NAME_TOO_LONG("Error: Task name too long"),
   TASK_DESC_TOO_LONG("Error: Task description too long"),
+  TASKS_PARSE("Error: Can't parse raw tasks"),
   JOB_NOT_RUNNING("Error: Job isn't running"),
   JOB_NOT_FINISHED("Error: Can't finish job"),
   INVALID_SCREEN("Error: Invalid screen state reached"),

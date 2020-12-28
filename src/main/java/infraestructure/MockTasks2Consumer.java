@@ -5,47 +5,50 @@ import application.ProxyWS3270;
 import application.Tasks2API;
 import domain.MainframeAPI;
 import domain.Proxy3270Emulator;
+import domain.Task;
 import domain.TasksAppAPI;
 import domain.enums.Job;
 
 public class MockTasks2Consumer {
-	public static void main(String[] args) {
-		Proxy3270Emulator proxy = null;
-		try {
-			proxy = new ProxyWS3270("ws3270");
-			MainframeAPI mainframe = new MusicAPI(proxy);
-			TasksAppAPI tasksApp = new Tasks2API(proxy, mainframe);
+  public static void main(String[] args) {
+    Proxy3270Emulator proxy = null;
+    try {
+      proxy = new ProxyWS3270("ws3270");
+      MainframeAPI mainframe = new MusicAPI(proxy);
+      TasksAppAPI tasksApp = new Tasks2API(proxy, mainframe);
 
-			if (proxy.connect("155.210.71.101", "123").success()) {
-				System.out.println("Connected!");
+      if (proxy.connect("155.210.71.101", "623").success()) {
+        System.out.println("Connected!");
 
-				mainframe.login("prog", "prog123");
-				System.out.println("Login!");
+        mainframe.login("prog", "prog123");
+        System.out.println("Login!");
 
-				mainframe.executeJob(Job.TASKS2);
-				System.out.println("Executing tasks2!");
+        mainframe.executeJob(Job.TASKS2);
+        System.out.println("Executing tasks2!");
 
-				tasksApp.removeTask(1000000);
-				System.out.println("Task removed!");
+        for (Task t : tasksApp.listTasks()) {
+          System.out.println(t);
+        }
+        System.out.println("Tasks listed!");
 
-				tasksApp.exit();
-				System.out.println("Exit tasks2!");
-			}
+        tasksApp.exit();
+        System.out.println("Exit tasks2!");
+      }
 
-			mainframe.logout();
-			System.out.println("Logout!");
+      mainframe.logout();
+      System.out.println("Logout!");
 
-			if (proxy.disconnect().success()) System.out.println("Disconnect!");
-		} catch (Exception e) {
-			e.printStackTrace();
+      if (proxy.disconnect().success()) System.out.println("Disconnect!");
+    } catch (Exception e) {
+      e.printStackTrace();
 
-			if (proxy != null) {
-				try {
-					if (proxy.disconnect().success()) System.out.println("Disconnect!");
-				} catch (Exception e2) {
-					e2.printStackTrace();
-				}
-			}
-		}
-	}
+      if (proxy != null) {
+        try {
+          if (proxy.disconnect().success()) System.out.println("Disconnect!");
+        } catch (Exception e2) {
+          e2.printStackTrace();
+        }
+      }
+    }
+  }
 }

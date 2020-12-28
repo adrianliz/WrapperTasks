@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.StringReader;
 
 public class ResponseWS3270 implements Response3270 {
-  private static final String DATA_INDICATOR = "data: ";
+  private static final String DATA_INDICATOR = "data:";
   private static final String CONNECTED_INDICATOR = "C";
 
   private String data;
@@ -31,9 +31,8 @@ public class ResponseWS3270 implements Response3270 {
     }
   }
 
-  // TODO: return parse data and not raw data
   public String getParsedData() {
-    return data;
+    return data.replaceAll(DATA_INDICATOR + "\\s", "");
   }
 
   public boolean contains(String indicator) {

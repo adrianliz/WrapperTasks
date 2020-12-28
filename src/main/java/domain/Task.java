@@ -3,7 +3,10 @@ package domain;
 import domain.enums.ErrorMessage;
 import domain.exceptions.TaskNotValid;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.regex.Matcher;
 
 public class Task {
   private final int id;
@@ -20,12 +23,23 @@ public class Task {
       int maxDescriptionLength)
       throws TaskNotValid {
 
+    // TODO: comprobar que el date sea valido, nombres no vacios, etc.
     validate(name, description, maxNameLength, maxDescriptionLength);
 
     this.id = id;
     this.name = name;
     this.description = description;
     this.date = date;
+  }
+
+  public Task(Matcher taskFinder) throws ParseException {
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+
+    id = Integer.parseInt(taskFinder.group(1));
+    name = taskFinder.group(2);
+    description = taskFinder.group(3);
+    date = Calendar.getInstance();
+    date.setTime(sdf.parse(taskFinder.group(4)));
   }
 
   public String getId() {
@@ -50,5 +64,12 @@ public class Task {
     if (name.length() > maxNameLength) throw new TaskNotValid(ErrorMessage.TASK_NAME_TOO_LONG);
     if (description.length() > maxDescLength)
       throw new TaskNotValid(ErrorMessage.TASK_DESC_TOO_LONG);
+  }
+
+  @Override
+  public String toString() {
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+
+    return id + " " + name + " " + description + " " + sdf.format(date.getTime());
   }
 }

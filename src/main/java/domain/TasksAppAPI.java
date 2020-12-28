@@ -14,7 +14,7 @@ public interface TasksAppAPI {
 
   List<Task> searchTasks(Calendar date);
 
-  List<Task> listTasks();
+  List<Task> listTasks() throws TasksAppException;
 
   void saveTasks() throws TasksAppException;
 
