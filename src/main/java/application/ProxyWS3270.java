@@ -28,7 +28,8 @@ public class ProxyWS3270 implements Proxy3270Emulator {
   private Response3270 syncInputRead() throws IOException {
     StringBuilder buffer = new StringBuilder();
 
-    while (in.available() == 0);
+    while (in.available() == 0)
+      ;
 
     while (in.available() > 0) {
       buffer.append((char) in.read());

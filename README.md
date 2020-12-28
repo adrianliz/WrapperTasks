@@ -28,7 +28,7 @@ Práctica 3 de la asignatura de SL
     6. Añadir tarea (v1.5.0) :white_check_mark:
     7. Eliminar tarea (v1.6.0) :white_check_mark:
     8. Guardar tareas (v1.7.0) :white_check_mark:
-    9. Listar tareas (v1.8.0)
+    9. Listar tareas (v1.8.0) :white_check_mark:
     10. Buscar tareas (v1.9.0)
     11. Sin definir (v2.0.0)
     

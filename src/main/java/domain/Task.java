@@ -2,14 +2,11 @@ package domain;
 
 import domain.enums.ErrorMessage;
 import domain.exceptions.TaskNotValid;
-import jdk.swing.interop.SwingInterOpUtils;
 
-import java.io.BufferedReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Scanner;
-import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class Task {
   private final int id;
@@ -26,7 +23,7 @@ public class Task {
       int maxDescriptionLength)
       throws TaskNotValid {
 
-    // TODO: comprobar que el date sea valido
+    // TODO: comprobar que el date sea valido, nombres no vacios, etc.
     validate(name, description, maxNameLength, maxDescriptionLength);
 
     this.id = id;
@@ -35,25 +32,14 @@ public class Task {
     this.date = date;
   }
 
-  public Task(Scanner sc) throws ParseException {
+  public Task(Matcher taskFinder) throws ParseException {
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
 
-    id = Integer.parseInt(parseTaskField(sc));
-    name = parseTaskField(sc);
-    description = parseTaskField(sc);
+    id = Integer.parseInt(taskFinder.group(1));
+    name = taskFinder.group(2);
+    description = taskFinder.group(3);
     date = Calendar.getInstance();
-
-    while (sc.hasNextLine()) {
-      String s = sc.nextLine();
-      if (s.contains("DATE: ")) {
-        date.setTime(sdf.parse(parseTaskField(new Scanner(s))));
-      }
-    }
-  }
-
-  private String parseTaskField(Scanner sc) {
-    return sc.nextLine().replaceAll(Pattern.compile(".*:\\s").pattern(), "").
-                         replaceAll(Pattern.compile("\\s\\s+").pattern(), "");
+    date.setTime(sdf.parse(taskFinder.group(4)));
   }
 
   public String getId() {
@@ -82,10 +68,8 @@ public class Task {
 
   @Override
   public String toString() {
-    return "Task{" +
-      "id=" + id +
-      ", name='" + name + '\'' +
-      ", description='" + description + '\'' +
-      '}';
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+
+    return id + " " + name + " " + description + " " + sdf.format(date.getTime());
   }
 }
