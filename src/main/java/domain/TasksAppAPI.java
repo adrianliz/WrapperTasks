@@ -12,7 +12,7 @@ public interface TasksAppAPI {
 
   void removeTask(int idTask) throws TasksAppException;
 
-  List<Task> searchTasks(Calendar date);
+  List<Task> searchTasks(Calendar date) throws TasksAppException;
 
   List<Task> listTasks() throws TasksAppException;
 

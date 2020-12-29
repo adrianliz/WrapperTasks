@@ -139,10 +139,6 @@ public class Tasks2API implements TasksAppAPI {
     }
   }
 
-  public List<Task> searchTasks(Calendar date) {
-    return null;
-  }
-
   public List<Task> listTasks() throws TasksAppException {
     validateTasks2Running();
     List<Task> tasks = new ArrayList<>();
@@ -173,6 +169,17 @@ public class Tasks2API implements TasksAppAPI {
     }
 
     return tasks;
+  }
+
+  public List<Task> searchTasks(Calendar date) throws TasksAppException {
+    List<Task> dateTasks = new ArrayList<>();
+
+    for (Task task: listTasks()) {
+      if (parseDate(task.getDate()).equals(parseDate(date)))
+        dateTasks.add(task);
+    }
+
+    return dateTasks;
   }
 
   public void saveTasks() throws TasksAppException {

@@ -9,6 +9,9 @@ import domain.Task;
 import domain.TasksAppAPI;
 import domain.enums.Job;
 
+import java.time.LocalDate;
+import java.util.Calendar;
+
 public class MockTasks2Consumer {
   public static void main(String[] args) {
     Proxy3270Emulator proxy = null;
@@ -30,6 +33,14 @@ public class MockTasks2Consumer {
           System.out.println(t);
         }
         System.out.println("Tasks listed!");
+
+        Calendar testDate = Calendar.getInstance();
+        testDate.set(1989, Calendar.SEPTEMBER, 9, 0, 0);
+
+        for (Task t: tasksApp.searchTasks(testDate)) {
+           System.out.println(t);
+        }
+        System.out.println("Tasks searched!");
 
         tasksApp.exit();
         System.out.println("Exit tasks2!");
