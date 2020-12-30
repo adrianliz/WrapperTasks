@@ -48,7 +48,8 @@ public class Tasks2API implements TasksAppAPI {
 
     if (errorIndicator != null) {
       Response3270 response = emulator.syncBufferRead();
-      if (response.contains(errorIndicator.toString())) {
+      if ((! response.contains(ScreenIndicator.TASKS2_TASK_NAME_FIELD.toString()) &&
+          (response.contains(errorIndicator.toString())))) {
         if (response.contains(ScreenIndicator.TASKS2_PRESS_ENTER_TO_CONTINUE.toString())) {
           emulator.enter();
         }

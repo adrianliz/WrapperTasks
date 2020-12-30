@@ -6,14 +6,24 @@
 
   <groupId>org.example</groupId>
   <artifactId>WrapperTasks</artifactId>
+  <packaging>war</packaging>
   <version>1.8.0</version>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <failOnMissingWebXml>false</failOnMissingWebXml>
+    <jakartaee>8.0</jakartaee>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>javax</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>${jakartaee}</version>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
@@ -44,6 +54,21 @@
         <version>3.8.1</version>
         <configuration>
           <release>11</release>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.3.1</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+          <webResources>
+            <resource>
+              <directory>/public/</directory>
+              <targetPath>WEB-INF/public</targetPath>
+            </resource>
+          </webResources>
         </configuration>
       </plugin>
     </plugins>

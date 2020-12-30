@@ -8,17 +8,21 @@ import domain.Proxy3270Emulator;
 import domain.Task;
 import domain.TasksAppAPI;
 import domain.enums.Job;
+import domain.exceptions.TaskNotValid;
+import domain.exceptions.TasksAppException;
 
 import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.List;
 
 public class MockTasks2Consumer {
-  public static void main(String[] args) {
+  public static void main(String[] args) throws TasksAppException, TaskNotValid {
     Proxy3270Emulator proxy = null;
+    TasksAppAPI tasksApp = null;
     try {
       proxy = new ProxyWS3270("ws3270");
       MainframeAPI mainframe = new MusicAPI(proxy);
-      TasksAppAPI tasksApp = new Tasks2API(proxy, mainframe);
+      tasksApp = new Tasks2API(proxy, mainframe);
 
       if (proxy.connect("155.210.71.101", "623").success()) {
         System.out.println("Connected!");
@@ -29,18 +33,15 @@ public class MockTasks2Consumer {
         mainframe.executeJob(Job.TASKS2);
         System.out.println("Executing tasks2!");
 
-        for (Task t : tasksApp.listTasks()) {
-          System.out.println(t);
-        }
-        System.out.println("Tasks listed!");
+        Task t =new Task(1800, "aaa", "a",
+                          Calendar.getInstance(), 50, 50);
+        tasksApp.addTask(t);
 
-        Calendar testDate = Calendar.getInstance();
-        testDate.set(1989, Calendar.SEPTEMBER, 9, 0, 0);
+        //List<Task> t1 = tasksApp.listTasks();
+        //List<Task> t2 = tasksApp.listTasks();
 
-        for (Task t: tasksApp.searchTasks(testDate)) {
-           System.out.println(t);
-        }
-        System.out.println("Tasks searched!");
+        //for (Task tas : t1) System.out.println(tas);
+        //for (Task tas : t2) System.out.println(tas);
 
         tasksApp.exit();
         System.out.println("Exit tasks2!");
@@ -52,6 +53,16 @@ public class MockTasks2Consumer {
       if (proxy.disconnect().success()) System.out.println("Disconnect!");
     } catch (Exception e) {
       e.printStackTrace();
+
+      Task t =new Task(1990, "aaa", "a",
+              Calendar.getInstance(), 50, 50);
+
+      tasksApp.addTask(t);
+      List<Task> t1 = tasksApp.listTasks();
+      List<Task> t2 = tasksApp.listTasks();
+
+      for (Task tas : t1) System.out.println(tas);
+      for (Task tas : t2) System.out.println(tas);
 
       if (proxy != null) {
         try {
