@@ -26,45 +26,47 @@ public class ServletLogin extends HttpServlet {
   private MainframeAPI mainframe;
   private TasksAppAPI tasksApp;
 
-  private HttpSession session;
+  @Override
+  public void init() throws ServletException {
+    super.init();
 
-  public ServletLogin() {
     try {
       proxy = new ProxyWS3270("ws3270");
       mainframe = new MusicAPI(proxy);
       tasksApp = new Tasks2API(proxy, mainframe);
-    } catch (IOException e) {
-      e.printStackTrace();
+    } catch (IOException ex) {
+      System.err.println(ex.getMessage());
     }
   }
 
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    String user = request.getParameter("user");
-    String pwd = request.getParameter("password");
-    String IP = request.getParameter("IP");
-    String port = request.getParameter("port");
 
-    //TODO: si ya esta conectado que no vuelva a hacerlo
     try {
-      session = request.getSession(true);
+      String user = request.getParameter("user");
+      String pwd = request.getParameter("password");
+      String IP = request.getParameter("IP");
+      String port = request.getParameter("port");
 
       proxy.connect(IP, port);
       mainframe.login(user, pwd);
       mainframe.executeJob(Job.TASKS2);
 
+      HttpSession session = request.getSession(true);
       session.setAttribute("proxy", proxy);
       session.setAttribute("mainframe", mainframe);
       session.setAttribute("tasksApp", tasksApp);
-      request.getRequestDispatcher("/WEB-INF/public/menu.jsp").forward(request, response);
-    } catch (AuthException | InvalidScreenException ex) {
-      ex.printStackTrace();
-      proxy.disconnect();
-    }
-  }
 
-  protected void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    request.getRequestDispatcher("/WEB-INF/public/index.jsp").forward(request, response);
+      request.getRequestDispatcher("menu.jsp").forward(request, response);
+    } catch (AuthException | InvalidScreenException | IOException ex) {
+      try {
+        proxy.disconnect();
+        request.setAttribute("errorMessage", ex.getMessage());
+      } catch (IOException ex2) {
+        request.setAttribute("errorMessage", ex2.getMessage());
+      }
+
+      request.getRequestDispatcher("index.jsp").forward(request, response);
+    }
   }
 }

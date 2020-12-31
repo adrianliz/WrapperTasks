@@ -1,9 +1,8 @@
 package infraestructure;
 
-import domain.Proxy3270Emulator;
 import domain.Task;
 import domain.TasksAppAPI;
-import domain.exceptions.TaskNotValid;
+import domain.exceptions.InvalidTask;
 import domain.exceptions.TasksAppException;
 
 import javax.servlet.ServletException;
@@ -22,35 +21,45 @@ import java.util.Date;
     name = "ServletAddTask",
     urlPatterns = {"/add"})
 public class ServletAddTask extends HttpServlet {
+  private static final int TASK_NAME_LENGTH = 16;
+  private static final int TASK_DESCRIPTION_LENGTH = 32;
+
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+
     request.setCharacterEncoding("UTF-8");
-
     HttpSession session = request.getSession(false);
-    Proxy3270Emulator proxy = (Proxy3270Emulator) session.getAttribute("proxy");
-    TasksAppAPI tasksApp = (TasksAppAPI) session.getAttribute("tasksApp");
 
-    String message;
-    try {
-      int id = Integer.parseInt(request.getParameter("idTask"));
-      String name = request.getParameter("name");
-      String description = request.getParameter("description");
-      System.out.println(description);
+    if (session != null) {
+      TasksAppAPI tasksApp = (TasksAppAPI) session.getAttribute("tasksApp");
 
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-      Date date = sdf.parse(request.getParameter("date"));
-      Calendar calendar = Calendar.getInstance();
-      calendar.setTime(date);
+      if (tasksApp != null) {
+        try {
+          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+          Date date = sdf.parse(request.getParameter("date"));
+          Calendar calendar = Calendar.getInstance();
+          calendar.setTime(date);
 
-      Task task = new Task(id, name, description, calendar, 16, 32);
-      tasksApp.addTask(task);
+          int idTask = Integer.parseInt(request.getParameter("idTask"));
+          String name = request.getParameter("name");
+          String description = request.getParameter("description");
 
-      message = "Task added";
-    } catch (ParseException | TaskNotValid | TasksAppException e) {
-      message = e.getMessage();
+          Task task =
+              new Task(
+                  idTask, name, description, calendar, TASK_NAME_LENGTH, TASK_DESCRIPTION_LENGTH);
+
+          tasksApp.addTask(task);
+          request.setAttribute("successMessage", "Task " + idTask + " added");
+        } catch (TasksAppException | InvalidTask | ParseException ex) {
+          request.setAttribute("errorMessage", ex.getMessage());
+        }
+
+        request.getRequestDispatcher("menu.jsp").forward(request, response);
+      } else {
+        request.getRequestDispatcher("index.jsp").forward(request, response);
+      }
+    } else {
+      request.getRequestDispatcher("index.jsp").forward(request, response);
     }
-
-    request.setAttribute("message", message);
-    request.getRequestDispatcher("/WEB-INF/public/menu.jsp").forward(request, response);
   }
 }

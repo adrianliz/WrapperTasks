@@ -1,10 +1,5 @@
 package infraestructure;
 
-import application.MusicAPI;
-import application.ProxyWS3270;
-import application.Tasks2API;
-import domain.MainframeAPI;
-import domain.Proxy3270Emulator;
 import domain.TasksAppAPI;
 import domain.exceptions.TasksAppException;
 
@@ -22,19 +17,26 @@ import java.io.IOException;
 public class ServletSaveTasks extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+
     HttpSession session = request.getSession(false);
-    Proxy3270Emulator proxy = (Proxy3270Emulator) session.getAttribute("proxy");
-    TasksAppAPI tasksApp = (TasksAppAPI) session.getAttribute("tasksApp");
 
-    String message;
-    try {
-      message = "Tasks saved";
-      tasksApp.saveTasks();
-    } catch (TasksAppException e) {
-      message = e.getErrorMessage().toString();
+    if (session != null) {
+      TasksAppAPI tasksApp = (TasksAppAPI) session.getAttribute("tasksApp");
+
+      if (tasksApp != null) {
+        try {
+          tasksApp.saveTasks();
+          request.setAttribute("successMessage", "Tasks saved");
+        } catch (TasksAppException ex) {
+          request.setAttribute("errorMessage", ex.getMessage());
+        }
+
+        request.getRequestDispatcher("menu.jsp").forward(request, response);
+      } else {
+        request.getRequestDispatcher("index.jsp").forward(request, response);
+      }
+    } else {
+      request.getRequestDispatcher("index.jsp").forward(request, response);
     }
-
-    request.setAttribute("message", message);
-    request.getRequestDispatcher("/WEB-INF/public/menu.jsp").forward(request, response);
   }
 }

@@ -7,7 +7,7 @@ import domain.TasksAppAPI;
 import domain.enums.ErrorMessage;
 import domain.enums.Job;
 import domain.enums.ScreenIndicator;
-import domain.exceptions.TaskNotValid;
+import domain.exceptions.InvalidTask;
 import domain.exceptions.TasksAppException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -69,7 +69,7 @@ public class AddTaskTest {
 		}
 
 	@Test
-	public void shouldAddTask() throws TaskNotValid {
+	public void shouldAddTask() throws InvalidTask {
 		TasksAppAPI tasks2 = new Tasks2API(new Fake3270Emulator(defaultResponse),
                                        new FakeMainframeAPI(Job.TASKS2));
 
@@ -82,7 +82,7 @@ public class AddTaskTest {
 
 	@Test
 	public void shouldThrowTaskNameTooLong() {
-		TaskNotValid ex = assertThrows(TaskNotValid.class, () ->
+		InvalidTask ex = assertThrows(InvalidTask.class, () ->
 			new Task(101, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "a",
 			Calendar.getInstance(), 1, 0));
 
@@ -91,7 +91,7 @@ public class AddTaskTest {
 
 	@Test
 	public void shouldThrowTaskDescriptionTooLong() {
-		TaskNotValid ex = assertThrows(TaskNotValid.class, () ->
+		InvalidTask ex = assertThrows(InvalidTask.class, () ->
 			new Task(101, "a", "a",
 				Calendar.getInstance(), 1, 0));
 
@@ -99,7 +99,7 @@ public class AddTaskTest {
 	}
 
 	@Test
-	public void shouldThrowTaskNumberRepeated() throws TaskNotValid {
+	public void shouldThrowTaskNumberRepeated() throws InvalidTask {
 		TasksAppAPI tasks2 = new Tasks2API(new Fake3270Emulator(taskNumberRepeated),
 																			 new FakeMainframeAPI(Job.TASKS2));
 
@@ -109,6 +109,6 @@ public class AddTaskTest {
 
 		TasksAppException ex = assertThrows(TasksAppException.class, () -> tasks2.addTask(t));
 
-		assertEquals(ex.getErrorMessage(), ErrorMessage.TASK_NUMBER_REPEATED);
+		assertEquals(ex.getSimpleMessage(), ErrorMessage.TASK_NUMBER_REPEATED.toString());
 	}
 }

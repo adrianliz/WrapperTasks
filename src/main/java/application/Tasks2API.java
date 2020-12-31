@@ -80,7 +80,7 @@ public class Tasks2API implements TasksAppAPI {
       emulator.enter();
       emulator.waitScreen(ScreenIndicator.TASKS2_MAIN_WINDOW);
     } catch (InvalidScreenException ex) {
-      throw new TasksAppException(Job.TASKS2, ErrorMessage.INVALID_SCREEN);
+      throw new TasksAppException(Job.TASKS2, ex);
     } catch (IOException ex) {
       throw new TasksAppException(Job.TASKS2, ErrorMessage.IO);
     }
@@ -108,7 +108,7 @@ public class Tasks2API implements TasksAppAPI {
       emulator.enter();
       emulator.waitScreen(ScreenIndicator.TASKS2_MAIN_WINDOW);
     } catch (InvalidScreenException ex) {
-      throw new TasksAppException(Job.TASKS2, ErrorMessage.INVALID_SCREEN);
+      throw new TasksAppException(Job.TASKS2, ex);
     } catch (IOException ex) {
       throw new TasksAppException(Job.TASKS2, ErrorMessage.IO);
     }
@@ -134,7 +134,7 @@ public class Tasks2API implements TasksAppAPI {
       emulator.enter();
       emulator.waitScreen(ScreenIndicator.TASKS2_MAIN_WINDOW);
     } catch (InvalidScreenException ex) {
-      throw new TasksAppException(Job.TASKS2, ErrorMessage.INVALID_SCREEN);
+      throw new TasksAppException(Job.TASKS2, ex);
     } catch (IOException ex) {
       throw new TasksAppException(Job.TASKS2, ErrorMessage.IO);
     }
@@ -162,7 +162,7 @@ public class Tasks2API implements TasksAppAPI {
         tasks.add(new Task(taskFinder));
       }
     } catch (InvalidScreenException ex) {
-      throw new TasksAppException(Job.TASKS2, ErrorMessage.INVALID_SCREEN);
+      throw new TasksAppException(Job.TASKS2, ex);
     } catch (IOException ex) {
       throw new TasksAppException(Job.TASKS2, ErrorMessage.IO);
     } catch (ParseException ex) {
@@ -193,7 +193,7 @@ public class Tasks2API implements TasksAppAPI {
       emulator.enter();
       emulator.waitScreen(ScreenIndicator.TASKS2_MAIN_WINDOW);
     } catch (InvalidScreenException ex) {
-      throw new TasksAppException(Job.TASKS2, ErrorMessage.INVALID_SCREEN);
+      throw new TasksAppException(Job.TASKS2, ex);
     } catch (IOException ex) {
       throw new TasksAppException(Job.TASKS2, ErrorMessage.IO);
     }
@@ -213,7 +213,7 @@ public class Tasks2API implements TasksAppAPI {
         throw new TasksAppException(Job.TASKS2, ErrorMessage.JOB_NOT_FINISHED);
       }
     } catch (InvalidScreenException ex) {
-      throw new TasksAppException(Job.TASKS2, ErrorMessage.INVALID_SCREEN);
+      throw new TasksAppException(Job.TASKS2, ex);
     } catch (IOException ex) {
       throw new TasksAppException(Job.TASKS2, ErrorMessage.IO);
     }

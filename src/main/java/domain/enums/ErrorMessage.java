@@ -1,6 +1,7 @@
 package domain.enums;
 
 public enum ErrorMessage {
+  PROXY_NOT_CONNECTED("Error: Proxy is not connected. Check IP and PORT"),
   USERID_UNAUTHORIZED("Error: UserID is unauthorized"),
   PWD_INCORRECT("Error: Password incorrect"),
   USERID_IN_USE("Error: UserID is in use"),
@@ -11,7 +12,6 @@ public enum ErrorMessage {
   TASKS_PARSE("Error: Can't parse raw tasks"),
   JOB_NOT_RUNNING("Error: Job isn't running"),
   JOB_NOT_FINISHED("Error: Can't finish job"),
-  INVALID_SCREEN("Error: Invalid screen state reached"),
   IO("Error: An IO error occurred");
 
   private final String message;

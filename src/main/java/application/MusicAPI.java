@@ -51,7 +51,7 @@ public class MusicAPI implements MainframeAPI {
       emulator.enter();
       emulator.waitScreen(ScreenIndicator.MUSIC_COMMAND_LINE);
     } catch (InvalidScreenException ex) {
-      throw new AuthException(ErrorMessage.INVALID_SCREEN);
+      throw new AuthException(ex);
     } catch (IOException ex) {
       throw new AuthException(ErrorMessage.IO);
     }
@@ -64,7 +64,7 @@ public class MusicAPI implements MainframeAPI {
       emulator.enter();
       emulator.waitScreen(ScreenIndicator.MUSIC_MAIN_WINDOW);
     } catch (InvalidScreenException ex) {
-      throw new AuthException(ErrorMessage.INVALID_SCREEN);
+      throw new AuthException(ex);
     } catch (IOException ex) {
       throw new AuthException(ErrorMessage.IO);
     }

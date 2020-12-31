@@ -1,10 +1,9 @@
 package infraestructure;
 
-import application.MusicAPI;
 import domain.MainframeAPI;
 import domain.Proxy3270Emulator;
 import domain.TasksAppAPI;
-import domain.exceptions.AuthException;
+import domain.enums.Job;
 import domain.exceptions.TasksAppException;
 
 import javax.servlet.ServletException;
@@ -20,21 +19,32 @@ import java.io.IOException;
     urlPatterns = {"/exit"})
 public class ServletExit extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    throws ServletException, IOException {
+
     HttpSession session = request.getSession(false);
-    Proxy3270Emulator proxy = (Proxy3270Emulator) session.getAttribute("proxy");
-    MainframeAPI mainframe = (MainframeAPI) session.getAttribute("mainframe");
-    TasksAppAPI tasksApp = (TasksAppAPI) session.getAttribute("tasksApp");
 
-    try {
-      tasksApp.exit();
-      mainframe.logout();
-    } catch (TasksAppException | AuthException e) {
-      e.printStackTrace();
+    if (session != null) {
+      Proxy3270Emulator proxy = (Proxy3270Emulator) session.getAttribute("proxy");
+      MainframeAPI mainframe = (MainframeAPI) session.getAttribute("mainframe");
+      TasksAppAPI tasksApp = (TasksAppAPI) session.getAttribute("tasksApp");
+
+      if ((tasksApp != null) && (mainframe != null) && (proxy != null)) {
+        try {
+          tasksApp.exit();
+          mainframe.finishJob(Job.TASKS2);
+          proxy.disconnect();
+
+          session.invalidate();
+          request.getRequestDispatcher("index.jsp").forward(request, response);
+        } catch (TasksAppException | IOException ex) {
+          request.setAttribute("errorMessage", ex.getMessage());
+          request.getRequestDispatcher("menu.jsp").forward(request, response);
+        }
+      } else {
+        request.getRequestDispatcher("index.jsp").forward(request, response);
+      }
+    } else {
+      request.getRequestDispatcher("index.jsp").forward(request, response);
     }
-
-    proxy.disconnect();
-    session.invalidate();
-    response.sendRedirect("login");
   }
 }

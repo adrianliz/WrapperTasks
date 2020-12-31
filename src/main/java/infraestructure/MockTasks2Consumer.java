@@ -8,15 +8,14 @@ import domain.Proxy3270Emulator;
 import domain.Task;
 import domain.TasksAppAPI;
 import domain.enums.Job;
-import domain.exceptions.TaskNotValid;
+import domain.exceptions.InvalidTask;
 import domain.exceptions.TasksAppException;
 
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 
 public class MockTasks2Consumer {
-  public static void main(String[] args) throws TasksAppException, TaskNotValid {
+  public static void main(String[] args) throws TasksAppException, InvalidTask {
     Proxy3270Emulator proxy = null;
     TasksAppAPI tasksApp = null;
     try {

@@ -1,7 +1,5 @@
 package infraestructure;
 
-import domain.MainframeAPI;
-import domain.Proxy3270Emulator;
 import domain.Task;
 import domain.TasksAppAPI;
 import domain.exceptions.TasksAppException;
@@ -24,43 +22,53 @@ import java.util.List;
     urlPatterns = {"/list"})
 public class ServletListTasks extends HttpServlet {
   private TasksAppAPI tasksApp;
-  private Proxy3270Emulator proxy;
 
-  private void initialize(HttpServletRequest request) {
+  private boolean initialize(HttpServletRequest request) {
     HttpSession session = request.getSession(false);
-    proxy = (Proxy3270Emulator) session.getAttribute("proxy");
-    tasksApp = (TasksAppAPI) session.getAttribute("tasksApp");
+
+    if (session != null) {
+      tasksApp = (TasksAppAPI) session.getAttribute("tasksApp");
+    }
+
+    return tasksApp != null;
   }
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    try {
-      initialize(request);
+      throws IOException, ServletException {
 
-      List<Task> tasks = tasksApp.listTasks();
-      request.setAttribute("tasks", tasks);
-      request.getRequestDispatcher("/WEB-INF/public/menu.jsp").forward(request, response);
-    } catch (TasksAppException e) {
-      e.printStackTrace();
-      proxy.disconnect();
+    if (initialize(request)) {
+      try {
+        List<Task> tasks = tasksApp.listTasks();
+        request.setAttribute("tasks", tasks);
+      } catch (TasksAppException ex) {
+        request.setAttribute("errorMessage", ex.getMessage());
+      }
+
+      request.getRequestDispatcher("menu.jsp").forward(request, response);
+    } else {
+      request.getRequestDispatcher("index.jsp").forward(request, response);
     }
   }
 
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
-          throws ServletException, IOException {
-    try {
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-      initialize(request);
+      throws ServletException, IOException {
 
-      Date date = sdf.parse(request.getParameter("date"));
-      Calendar calendar = Calendar.getInstance();
-      calendar.setTime(date);
+    if (initialize(request)) {
+      try {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = sdf.parse(request.getParameter("date"));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
 
-      List<Task> tasks = tasksApp.searchTasks(calendar);
-      request.setAttribute("tasks", tasks);
-      request.getRequestDispatcher("/WEB-INF/public/menu.jsp").forward(request, response);
-    } catch (TasksAppException | ParseException e) {
-      e.printStackTrace();
+        List<Task> tasks = tasksApp.searchTasks(calendar);
+        request.setAttribute("tasks", tasks);
+      } catch (TasksAppException | ParseException ex) {
+        request.setAttribute("errorMessage", ex.getMessage());
+      }
+
+      request.getRequestDispatcher("menu.jsp").forward(request, response);
+    } else {
+      request.getRequestDispatcher("index.jsp").forward(request, response);
     }
   }
 }

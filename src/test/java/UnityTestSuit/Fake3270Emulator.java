@@ -2,6 +2,7 @@ package UnityTestSuit;
 
 import domain.Proxy3270Emulator;
 import domain.Response3270;
+import domain.enums.ErrorMessage;
 import domain.enums.ScreenIndicator;
 import domain.exceptions.InvalidScreenException;
 
@@ -46,7 +47,7 @@ public class Fake3270Emulator implements Proxy3270Emulator {
 
 	@Override
 	public void waitScreen(ScreenIndicator indicator, long timeout) throws InvalidScreenException {
-		if (waitScreenFail) throw new InvalidScreenException(null);
+		if (waitScreenFail) throw new InvalidScreenException(ErrorMessage.PROXY_NOT_CONNECTED);
 	}
 
 	@Override

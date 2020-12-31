@@ -4,15 +4,21 @@ import domain.enums.ErrorMessage;
 import domain.enums.Job;
 
 public class TasksAppException extends Exception {
-  private final ErrorMessage message;
+  private final String simpleMessage;
 
   public TasksAppException(Job job, ErrorMessage message) {
-    super("Error occurred in " + job + "\n" + message.toString());
+    super(job + " -> " + message.toString());
 
-    this.message = message;
+    simpleMessage = message.toString();
   }
 
-  public ErrorMessage getErrorMessage() {
-    return message;
+  public TasksAppException(Job job, InvalidScreenException ex) {
+    super(job + " -> " + ex.getMessage());
+
+    this.simpleMessage = ex.getMessage();
+  }
+
+  public String getSimpleMessage() {
+    return simpleMessage;
   }
 }

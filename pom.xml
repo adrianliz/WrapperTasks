@@ -63,12 +63,6 @@
         <version>3.3.1</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
-          <webResources>
-            <resource>
-              <directory>/public/</directory>
-              <targetPath>WEB-INF/public</targetPath>
-            </resource>
-          </webResources>
         </configuration>
       </plugin>
     </plugins>

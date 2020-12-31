@@ -2,6 +2,7 @@ package application;
 
 import domain.*;
 import domain.enums.ActionWS3270;
+import domain.enums.ErrorMessage;
 import domain.enums.ScreenIndicator;
 import domain.exceptions.InvalidScreenException;
 
@@ -91,7 +92,6 @@ public class ProxyWS3270 implements Proxy3270Emulator {
   }
 
   public Response3270 syncWrite(String text) throws IOException {
-
     List<String> params = new ArrayList<>();
     params.add(text);
     return executeCommand(ActionWS3270.STRING, params);
@@ -105,12 +105,14 @@ public class ProxyWS3270 implements Proxy3270Emulator {
 
     do {
       Response3270 response = syncBufferRead(timeout);
-
-      if (response.success()) {
-        indicatorFound = response.getParsedData().contains(indicator.toString());
+      if (response.isConnected()) {
+        if (response.success()) {
+          indicatorFound = response.getParsedData().contains(indicator.toString());
+        }
+        attempts++;
+      } else {
+        throw new InvalidScreenException(ErrorMessage.PROXY_NOT_CONNECTED);
       }
-
-      attempts++;
     } while ((!indicatorFound) && (attempts < MAX_ATTEMPTS_SEARCHING_INDICATOR));
 
     if (!indicatorFound) throw new InvalidScreenException(indicator);

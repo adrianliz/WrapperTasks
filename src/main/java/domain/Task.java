@@ -1,7 +1,7 @@
 package domain;
 
 import domain.enums.ErrorMessage;
-import domain.exceptions.TaskNotValid;
+import domain.exceptions.InvalidTask;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,7 +21,7 @@ public class Task {
       Calendar date,
       int maxNameLength,
       int maxDescriptionLength)
-      throws TaskNotValid {
+      throws InvalidTask {
 
     // TODO: comprobar que el date sea valido, nombres no vacios, etc.
     validate(name, description, maxNameLength, maxDescriptionLength);
@@ -59,11 +59,11 @@ public class Task {
   }
 
   private void validate(String name, String description, int maxNameLength, int maxDescLength)
-      throws TaskNotValid {
+      throws InvalidTask {
 
-    if (name.length() > maxNameLength) throw new TaskNotValid(ErrorMessage.TASK_NAME_TOO_LONG);
+    if (name.length() > maxNameLength) throw new InvalidTask(ErrorMessage.TASK_NAME_TOO_LONG);
     if (description.length() > maxDescLength)
-      throw new TaskNotValid(ErrorMessage.TASK_DESC_TOO_LONG);
+      throw new InvalidTask(ErrorMessage.TASK_DESC_TOO_LONG);
   }
 
   @Override

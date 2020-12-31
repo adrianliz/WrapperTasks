@@ -18,20 +18,28 @@ import java.io.IOException;
 public class ServletRemoveTask extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+
     HttpSession session = request.getSession(false);
-    Proxy3270Emulator proxy = (Proxy3270Emulator) session.getAttribute("proxy");
-    TasksAppAPI tasksApp = (TasksAppAPI) session.getAttribute("tasksApp");
 
-    int id = Integer.parseInt(request.getParameter("idTask"));
-    String message;
-    try {
-      tasksApp.removeTask(id);
-      message = "Task removed";
-    } catch (TasksAppException e) {
-      message = e.getErrorMessage().toString();
+    if (session != null) {
+      TasksAppAPI tasksApp = (TasksAppAPI) session.getAttribute("tasksApp");
+
+      if (tasksApp != null) {
+        int idTask = Integer.parseInt(request.getParameter("idTask"));
+
+        try {
+          tasksApp.removeTask(idTask);
+          request.setAttribute("successMessage", "Task " + idTask + " removed");
+        } catch (TasksAppException ex) {
+          request.setAttribute("errorMessage", ex.getMessage());
+        }
+
+        request.getRequestDispatcher("menu.jsp").forward(request, response);
+      } else {
+        request.getRequestDispatcher("index.jsp").forward(request, response);
+      }
+    } else {
+      request.getRequestDispatcher("index.jsp").forward(request, response);
     }
-
-    request.setAttribute("message", message);
-    request.getRequestDispatcher("/WEB-INF/public/menu.jsp").forward(request, response);
   }
 }
