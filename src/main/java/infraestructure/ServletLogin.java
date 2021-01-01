@@ -26,6 +26,8 @@ public class ServletLogin extends HttpServlet {
   private MainframeAPI mainframe;
   private TasksAppAPI tasksApp;
 
+  private String initError;
+
   @Override
   public void init() throws ServletException {
     super.init();
@@ -35,38 +37,43 @@ public class ServletLogin extends HttpServlet {
       mainframe = new MusicAPI(proxy);
       tasksApp = new Tasks2API(proxy, mainframe);
     } catch (IOException ex) {
-      System.err.println(ex.getMessage());
+      initError = ex.getMessage();
     }
   }
 
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    throws IOException, ServletException {
 
-    try {
-      String user = request.getParameter("user");
-      String pwd = request.getParameter("password");
-      String IP = request.getParameter("IP");
-      String port = request.getParameter("port");
-
-      proxy.connect(IP, port);
-      mainframe.login(user, pwd);
-      mainframe.executeJob(Job.TASKS2);
-
-      HttpSession session = request.getSession(true);
-      session.setAttribute("proxy", proxy);
-      session.setAttribute("mainframe", mainframe);
-      session.setAttribute("tasksApp", tasksApp);
-
-      request.getRequestDispatcher("menu.jsp").forward(request, response);
-    } catch (AuthException | InvalidScreenException | IOException ex) {
-      try {
-        proxy.disconnect();
-        request.setAttribute("errorMessage", ex.getMessage());
-      } catch (IOException ex2) {
-        request.setAttribute("errorMessage", ex2.getMessage());
-      }
-
+    if (initError != null) {
+      request.setAttribute("errorMessage", initError);
       request.getRequestDispatcher("index.jsp").forward(request, response);
+    } else {
+      try {
+        String user = request.getParameter("user");
+        String pwd = request.getParameter("password");
+        String IP = request.getParameter("IP");
+        String port = request.getParameter("port");
+
+        proxy.connect(IP, port);
+        mainframe.login(user, pwd);
+        mainframe.executeJob(Job.TASKS2);
+
+        HttpSession session = request.getSession(true);
+        session.setAttribute("proxy", proxy);
+        session.setAttribute("mainframe", mainframe);
+        session.setAttribute("tasksApp", tasksApp);
+
+        response.sendRedirect(request.getContextPath() + "/list");
+      } catch (AuthException | InvalidScreenException | IOException ex) {
+        try {
+          proxy.disconnect();
+          request.setAttribute("errorMessage", ex.getMessage());
+        } catch (IOException ex2) {
+          request.setAttribute("errorMessage", ex2.getMessage());
+        }
+
+        request.getRequestDispatcher("index.jsp").forward(request, response);
+      }
     }
   }
 }

@@ -35,16 +35,16 @@ public class ServletExit extends HttpServlet {
           proxy.disconnect();
 
           session.invalidate();
-          request.getRequestDispatcher("index.jsp").forward(request, response);
+          response.sendRedirect(request.getContextPath() + "/index.jsp");
         } catch (TasksAppException | IOException ex) {
           request.setAttribute("errorMessage", ex.getMessage());
           request.getRequestDispatcher("menu.jsp").forward(request, response);
         }
       } else {
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+        ServletUtils.dispatchUserNotLogged(request, response);
       }
     } else {
-      request.getRequestDispatcher("index.jsp").forward(request, response);
+      ServletUtils.dispatchUserNotLogged(request, response);
     }
   }
 }

@@ -1,6 +1,6 @@
 package infraestructure;
 
-import domain.Proxy3270Emulator;
+import domain.Task;
 import domain.TasksAppAPI;
 import domain.exceptions.TasksAppException;
 
@@ -11,11 +11,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet(
     name = "ServletRemoveTask",
     urlPatterns = {"/remove"})
 public class ServletRemoveTask extends HttpServlet {
+
+  private void removeSessionTask(HttpSession session, int idTask) {
+    List<Task> tasks = (List<Task>) session.getAttribute("tasks");
+    tasks.removeIf(task -> Integer.parseInt(task.getId()) == idTask);
+  }
+
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
@@ -29,6 +36,7 @@ public class ServletRemoveTask extends HttpServlet {
 
         try {
           tasksApp.removeTask(idTask);
+          removeSessionTask(session, idTask);
           request.setAttribute("successMessage", "Task " + idTask + " removed");
         } catch (TasksAppException ex) {
           request.setAttribute("errorMessage", ex.getMessage());
@@ -36,10 +44,10 @@ public class ServletRemoveTask extends HttpServlet {
 
         request.getRequestDispatcher("menu.jsp").forward(request, response);
       } else {
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+        ServletUtils.dispatchUserNotLogged(request, response);
       }
     } else {
-      request.getRequestDispatcher("index.jsp").forward(request, response);
+      ServletUtils.dispatchUserNotLogged(request, response);
     }
   }
 }

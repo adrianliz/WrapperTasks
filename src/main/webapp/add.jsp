@@ -1,13 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-
-<%
-	Boolean disableBack = (Boolean) session.getAttribute("disableBack");
-
-	if ((disableBack != null) && (disableBack)) {
-%>
-<jsp:forward page="add.jsp"/>
-<% } %>
-
 <html>
 <head>
 	<meta charset="utf-8">
@@ -21,29 +12,45 @@
 </head>
 <body>
 	<div class="container mt-5">
+		<%
+			Boolean disableBack = (Boolean) session.getAttribute("disableBack");
+			if ((disableBack == null) || (!disableBack)) {
+		%>
+		<div class="text-right">
+			<a class="btn btn-dark" href="menu.jsp">Go back</a>
+		</div>
+		<% } else { %>
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
+			<strong>You must add a valid task before go back</strong>
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+		<% } %>
+
 		<div class="row-6 d-flex align-items-center justify-content-center mx-auto">
 			<div class="col-6 mt-5">
-				<h1 class="display-4 text-center">Login in Tasks2</h1>
-				<form method="POST" action="login">
+				<h1 class="display-4 text-center">Add new task</h1>
+				<form method="POST" action="add">
 					<div class="form-group">
-						<label for="user">User</label>
-						<input type="text" class="form-control" id="user" name="user" value="prog">
+						<label for="idTask-add">ID Task</label>
+						<input type="text" class="form-control" id="idTask-add" name="idTask">
 					</div>
 					<div class="form-group">
-						<label for="password">Password</label>
-						<input type="password" class="form-control" id="password" name="password" value="prog123">
+						<label for="name">Name</label>
+						<input type="text" class="form-control" id="name" name="name">
 					</div>
 					<div class="form-group">
-						<label for="IP">IP</label>
-						<input type="text" class="form-control" id="IP" name="IP" value="155.210.71.101">
+						<label for="description">Description</label>
+						<input type="text" class="form-control" id="description" name="description">
 					</div>
 					<div class="form-group">
-						<label for="port">Port</label>
-						<input type="text" class="form-control" id="port" name="port" value="623">
+						<label for="dateAdd">Date</label>
+						<input type="date" class="form-control" id="dateAdd" name="date">
 					</div>
 
 					<div class="text-right">
-						<button type="submit" class="btn btn-primary">Login</button>
+						<button type="submit" class="btn btn-success">Submit</button>
 					</div>
 
 					<%
@@ -53,6 +60,19 @@
 					<div class="mt-3 alert alert-danger alert-dismissible fade show" role="alert">
 						<strong>
 							<%= errorMessage %>
+						</strong>
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<% } %>
+
+					<%
+						String successMessage = (String) request.getAttribute("successMessage");
+						if (successMessage != null) {
+					%>
+					<div class="mt-3 alert alert-success alert-dismissible fade show" role="alert">
+						<strong><%= successMessage %>
 						</strong>
 						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 							<span aria-hidden="true">&times;</span>

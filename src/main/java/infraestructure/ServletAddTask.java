@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @WebServlet(
     name = "ServletAddTask",
@@ -48,18 +49,22 @@ public class ServletAddTask extends HttpServlet {
               new Task(
                   idTask, name, description, calendar, TASK_NAME_LENGTH, TASK_DESCRIPTION_LENGTH);
 
+          List<Task> tasks = (List<Task>) session.getAttribute("tasks");
           tasksApp.addTask(task);
+          tasks.add(task);
           request.setAttribute("successMessage", "Task " + idTask + " added");
+          session.setAttribute("disableBack", false);
         } catch (TasksAppException | InvalidTask | ParseException ex) {
           request.setAttribute("errorMessage", ex.getMessage());
+          session.setAttribute("disableBack", true);
         }
 
-        request.getRequestDispatcher("menu.jsp").forward(request, response);
+        request.getRequestDispatcher("add.jsp").forward(request, response);
       } else {
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+        ServletUtils.dispatchUserNotLogged(request, response);
       }
     } else {
-      request.getRequestDispatcher("index.jsp").forward(request, response);
+      ServletUtils.dispatchUserNotLogged(request, response);
     }
   }
 }

@@ -33,10 +33,10 @@ public class ServletSaveTasks extends HttpServlet {
 
         request.getRequestDispatcher("menu.jsp").forward(request, response);
       } else {
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+        ServletUtils.dispatchUserNotLogged(request, response);
       }
     } else {
-      request.getRequestDispatcher("index.jsp").forward(request, response);
+      ServletUtils.dispatchUserNotLogged(request, response);
     }
   }
 }

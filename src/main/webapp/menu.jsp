@@ -2,6 +2,15 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
+
+<%
+	Boolean disableBack = (Boolean) session.getAttribute("disableBack");
+
+	if ((disableBack != null) && (disableBack)) {
+%>
+<jsp:forward page="add.jsp"/>
+<% } %>
+
 <html>
 <head>
 	<meta charset="utf-8">
@@ -15,6 +24,8 @@
 </head>
 <body>
 	<div class="container mx-auto">
+		<h1 class="text-center">Dashboard Tasks2</h1>
+
 		<div class="row">
 			<%
 				String errorMessage = (String) request.getAttribute("errorMessage");
@@ -43,107 +54,68 @@
 			<% } %>
 		</div>
 
-		<div class="row mt-2 flex-row-reverse">
-			<a class="btn btn-primary" href="exit">Exit</a>
+		<div class="mt-2 text-right">
+			<a class="btn btn-dark" href="exit">Exit</a>
 		</div>
 
 		<div class="row mt-2">
-			<p>
-				<a class="btn btn-primary" href="save">Save tasks</a>
-				<a class="btn btn-primary" data-toggle="collapse" href="#collapseAdd" role="button" aria-expanded="false"
-					 aria-controls="collapseAdd">
-					Add task
-				</a>
-				<a class="btn btn-primary" data-toggle="collapse" href="#collapseRemove" role="button" aria-expanded="false"
-					 aria-controls="collapseRemove">
-					Remove task
-				</a>
-			</p>
-		</div>
+			<div class="col-2">
+				<a class="btn btn-primary" href="list">Refresh tasks</a>
+			</div>
 
-		<div class="row mt-2">
-			<div class="collapse" id="collapseRemove">
-				<form class="form" method="POST" action="remove">
+			<div class="col-1">
+				<form class="form-inline" method="POST" action="list">
 					<div class="form-group mb-2">
-						<label for="idTask-remove">ID Task</label>
-						<input type="text" class="form-control" id="idTask-remove" name="idTask">
+						<label class="sr-only" for="date">Date</label>
+						<input type="date" class="form-control mb-2 mr-sm-2" id="date" name="date">
+						<button type="submit" class="btn btn-success mb-2">Search</button>
 					</div>
-					<button type="submit" class="btn btn-danger">Remove</button>
-				</form>
-			</div>
-
-			<div class="collapse" id="collapseAdd">
-				<form method="POST" action="add">
-					<div class="form-group">
-						<label for="idTask-add">ID Task</label>
-						<input type="text" class="form-control" id="idTask-add" name="idTask">
-					</div>
-					<div class="form-group">
-						<label for="name">Name</label>
-						<input type="text" class="form-control" id="name" name="name">
-					</div>
-					<div class="form-group">
-						<label for="description">Description</label>
-						<input type="text" class="form-control" id="description" name="description">
-					</div>
-					<div class="form-group">
-						<label for="dateAdd">Date</label>
-						<input type="date" class="form-control" id="dateAdd" name="date">
-					</div>
-
-					<button type="submit" class="btn btn-success">Submit</button>
 				</form>
 			</div>
 		</div>
 
 		<div class="row mt-2">
-			<a class="btn btn-primary" href="list">List tasks</a>
-			<a class="btn btn-primary ml-2" data-toggle="collapse" href="#collapseSearch" role="button" aria-expanded="false"
-				 aria-controls="collapseSearch">
-				Search tasks
-			</a>
-		</div>
-
-		<div class="row mt-2">
-			<div class="collapse" id="collapseSearch">
-				<form class="form" method="POST" action="list">
-					<div class="form-group mb-2">
-						<label for="date">Date</label>
-						<input type="date" class="form-control" id="date" name="date">
-					</div>
-					<button type="submit" class="btn btn-success">Search</button>
-				</form>
-			</div>
-		</div>
-
-		<div class="row mt-2">
-			<div class="card-columns mt-2">
-				<%
-					List<Task> tasks = (List<Task>) request.getAttribute("tasks");
-					if (tasks != null) {
-						for (Task task : tasks) {
-				%>
-				<div class="card">
-					<div class="card-body">
-						<h5 class="card-title"><%= task.getName() %>
-						</h5>
-						<p class="card-text"><%= task.getDescription() %>
-						</p>
-						<p class="card-text">
-							<small class="text-muted">
-								<%
-									SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-									String formattedDate = sdf.format(task.getDate().getTime());
-								%>
-								<%= formattedDate %>
-							</small>
-						</p>
-					</div>
+			<div class="col">
+				<div class="text-right mb-2">
+					<a class="btn btn-info" href="add.jsp">Add task</a>
 				</div>
-				<%
+
+				<div class="card-columns mt-2">
+					<%
+						List<Task> tasks = (List<Task>) session.getAttribute("tasks");
+						if (tasks != null) {
+							for (Task task : tasks) {
+					%>
+					<div class="card shadow p-3 mb-5 bg-white rounded">
+						<div class="card-body">
+							<h5 class="card-title"><%= task.getName() %>
+							</h5>
+							<p class="card-text"><%= task.getDescription() %>
+							</p>
+							<p class="card-text">
+								<small class="text-muted">
+									<%
+										SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+										String formattedDate = sdf.format(task.getDate().getTime());
+									%>
+									<%= formattedDate %>
+								</small>
+							</p>
+							<form method="POST" action="remove">
+								<label>
+									<input name="idTask" value=<%= task.getId()%> hidden>
+								</label>
+								<div class="text-right">
+									<button type="submit" class="btn btn-danger mb-2">Remove</button>
+								</div>
+							</form>
+						</div>
+					</div>
+					<%
+							}
 						}
-					}
-				%>
+					%>
+				</div>
 			</div>
 		</div>
 	</div>

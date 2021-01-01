@@ -21,10 +21,11 @@ import java.util.List;
     name = "ServletListTasks",
     urlPatterns = {"/list"})
 public class ServletListTasks extends HttpServlet {
+  private HttpSession session;
   private TasksAppAPI tasksApp;
 
   private boolean initialize(HttpServletRequest request) {
-    HttpSession session = request.getSession(false);
+    session = request.getSession(false);
 
     if (session != null) {
       tasksApp = (TasksAppAPI) session.getAttribute("tasksApp");
@@ -39,14 +40,14 @@ public class ServletListTasks extends HttpServlet {
     if (initialize(request)) {
       try {
         List<Task> tasks = tasksApp.listTasks();
-        request.setAttribute("tasks", tasks);
+        session.setAttribute("tasks", tasks);
       } catch (TasksAppException ex) {
         request.setAttribute("errorMessage", ex.getMessage());
       }
 
       request.getRequestDispatcher("menu.jsp").forward(request, response);
     } else {
-      request.getRequestDispatcher("index.jsp").forward(request, response);
+      ServletUtils.dispatchUserNotLogged(request, response);
     }
   }
 
@@ -61,14 +62,14 @@ public class ServletListTasks extends HttpServlet {
         calendar.setTime(date);
 
         List<Task> tasks = tasksApp.searchTasks(calendar);
-        request.setAttribute("tasks", tasks);
+        session.setAttribute("tasks", tasks);
       } catch (TasksAppException | ParseException ex) {
         request.setAttribute("errorMessage", ex.getMessage());
       }
 
       request.getRequestDispatcher("menu.jsp").forward(request, response);
     } else {
-      request.getRequestDispatcher("index.jsp").forward(request, response);
+      ServletUtils.dispatchUserNotLogged(request, response);
     }
   }
 }
