@@ -18,9 +18,12 @@ import java.util.List;
     urlPatterns = {"/remove"})
 public class ServletRemoveTask extends HttpServlet {
 
-  private void removeSessionTask(HttpSession session, int idTask) {
+  private void removeTaskSession(HttpSession session, int idTask) {
     List<Task> tasks = (List<Task>) session.getAttribute("tasks");
-    tasks.removeIf(task -> Integer.parseInt(task.getId()) == idTask);
+
+    if (tasks != null) {
+      tasks.removeIf(task -> Integer.parseInt(task.getId()) == idTask);
+    }
   }
 
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -36,7 +39,7 @@ public class ServletRemoveTask extends HttpServlet {
 
         try {
           tasksApp.removeTask(idTask);
-          removeSessionTask(session, idTask);
+          removeTaskSession(session, idTask);
           request.setAttribute("successMessage", "Task " + idTask + " removed");
         } catch (TasksAppException ex) {
           request.setAttribute("errorMessage", ex.getMessage());

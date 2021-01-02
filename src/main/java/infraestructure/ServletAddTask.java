@@ -25,6 +25,14 @@ public class ServletAddTask extends HttpServlet {
   private static final int TASK_NAME_LENGTH = 16;
   private static final int TASK_DESCRIPTION_LENGTH = 32;
 
+  private void addTaskSession(HttpSession session, Task task) {
+    List<Task> tasks = (List<Task>) session.getAttribute("tasks");
+
+    if (tasks != null) {
+      tasks.add(task);
+    }
+  }
+
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
@@ -49,9 +57,8 @@ public class ServletAddTask extends HttpServlet {
               new Task(
                   idTask, name, description, calendar, TASK_NAME_LENGTH, TASK_DESCRIPTION_LENGTH);
 
-          List<Task> tasks = (List<Task>) session.getAttribute("tasks");
           tasksApp.addTask(task);
-          tasks.add(task);
+          addTaskSession(session, task);
           request.setAttribute("successMessage", "Task " + idTask + " added");
           session.setAttribute("disableBack", false);
         } catch (TasksAppException | InvalidTask | ParseException ex) {

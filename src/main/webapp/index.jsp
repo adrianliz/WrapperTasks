@@ -43,7 +43,7 @@
 					</div>
 
 					<div class="text-right">
-						<button type="submit" class="btn btn-primary">Login</button>
+						<button type="submit" class="btn btn-primary" id="loginButton">Login</button>
 					</div>
 
 					<%
@@ -60,6 +60,12 @@
 					</div>
 					<% } %>
 				</form>
+
+				<div class="mt-2 text-center">
+					<div class="spinner-grow text-primary" role="status" id="loader" style="display:none">
+						<span class="sr-only">Loading...</span>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -71,5 +77,11 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
 					integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
 					crossorigin="anonymous"></script>
+
+	<script>
+    $("#loginButton").click(function () {
+      $('#loader').show();
+    });
+	</script>
 </body>
 </html>
