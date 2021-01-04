@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -24,7 +25,8 @@ public class ServletListTasks extends HttpServlet {
   private HttpSession session;
   private TasksAppAPI tasksApp;
 
-  private boolean initialize(HttpServletRequest request) {
+  private boolean initialize(HttpServletRequest request) throws UnsupportedEncodingException {
+    request.setCharacterEncoding("UTF-8");
     session = request.getSession(false);
 
     if (session != null) {

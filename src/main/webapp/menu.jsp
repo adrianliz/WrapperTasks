@@ -59,8 +59,12 @@
 		</div>
 
 		<div class="row mt-2">
+			<div class="col-2 mr-2">
+				<a class="btn btn-primary" href="new">New task file</a>
+			</div>
+
 			<div class="col-2">
-				<a class="btn btn-primary" href="list">Refresh tasks</a>
+				<a class="btn btn-primary" href="list">List tasks</a>
 			</div>
 
 			<div class="col-1">
@@ -77,7 +81,7 @@
 		<div class="row mt-2">
 			<div class="col">
 				<div class="text-right mb-2">
-					<a class="btn btn-info" href="add.jsp">Add task</a>
+					<a class="btn btn-primary" href="add.jsp">Add task</a>
 				</div>
 
 				<div class="card-columns mt-2">

@@ -34,19 +34,19 @@
 				<form method="POST" action="add">
 					<div class="form-group">
 						<label for="idTask-add">ID Task</label>
-						<input type="text" class="form-control" id="idTask-add" name="idTask">
+						<input type="text" class="form-control" id="idTask-add" name="idTask" required>
 					</div>
 					<div class="form-group">
 						<label for="name">Name</label>
-						<input type="text" class="form-control" id="name" name="name">
+						<input type="text" class="form-control" id="name" name="name" required>
 					</div>
 					<div class="form-group">
 						<label for="description">Description</label>
-						<input type="text" class="form-control" id="description" name="description">
+						<input type="text" class="form-control" id="description" name="description" required>
 					</div>
 					<div class="form-group">
 						<label for="dateAdd">Date</label>
-						<input type="date" class="form-control" id="dateAdd" name="date">
+						<input type="date" class="form-control" id="dateAdd" name="date" required>
 					</div>
 
 					<div class="text-right">

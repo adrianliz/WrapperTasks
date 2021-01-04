@@ -14,9 +14,11 @@ public enum SuccessIndicator {
   }
 
   public static SuccessIndicator getSuccessIndicator(String s) {
-    for (SuccessIndicator successIndicator : SuccessIndicator.values()) {
-      if (Pattern.compile(successIndicator.regexp()).matcher(s).matches()) {
-        return successIndicator;
+    if (s != null) {
+      for (SuccessIndicator successIndicator : SuccessIndicator.values()) {
+        if (Pattern.compile(successIndicator.regexp()).matcher(s).matches()) {
+          return successIndicator;
+        }
       }
     }
 

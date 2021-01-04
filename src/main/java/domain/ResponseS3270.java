@@ -20,7 +20,8 @@ public class ResponseS3270 implements Response3270 {
       StringBuilder dataBuilder = new StringBuilder();
       String line;
 
-      while ((line = screenReader.readLine()).startsWith(DATA_INDICATOR)) {
+      while (((line = screenReader.readLine()) != null) &&
+              (line.startsWith(DATA_INDICATOR))) {
         dataBuilder.append(line);
         dataBuilder.append("\n");
       }
@@ -32,11 +33,19 @@ public class ResponseS3270 implements Response3270 {
   }
 
   public String getParsedData() {
-    return data.replaceAll(DATA_INDICATOR + "\\s", "");
+    if (data != null) {
+      return data.replaceAll(DATA_INDICATOR + "\\s", "");
+    }
+
+    return "";
   }
 
   public boolean contains(String indicator) {
-    return data.contains(indicator);
+    if (indicator != null) {
+      return data.contains(indicator);
+    }
+
+    return false;
   }
 
   public boolean success() {
@@ -44,6 +53,10 @@ public class ResponseS3270 implements Response3270 {
   }
 
   public boolean isConnected() {
-    return prompt.contains(CONNECTED_INDICATOR);
+    if (prompt != null) {
+      return prompt.contains(CONNECTED_INDICATOR);
+    }
+
+    return false;
   }
 }

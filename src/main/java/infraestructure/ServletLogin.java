@@ -73,7 +73,7 @@ public class ServletLogin extends HttpServlet {
         session.setAttribute("mainframe", mainframe);
         session.setAttribute("tasksApp", tasksApp);
 
-        response.sendRedirect(request.getContextPath() + "/list");
+        response.sendRedirect(request.getContextPath() + "/menu.jsp");
       } catch (AuthException | InvalidScreenException | IOException ex) {
         try {
           proxy.disconnect();

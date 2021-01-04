@@ -15,7 +15,7 @@ import java.util.StringJoiner;
 
 public class ProxyS3270 implements Proxy3270Emulator {
   private static final int MAX_ATTEMPTS_SEARCHING_INDICATOR = 10;
-  private static final long DEFAULT_TIMEOUT = 2; // s
+  private static final long DEFAULT_TIMEOUT = 3; // s
 
   private final InputStream in;
   private final PrintWriter out;

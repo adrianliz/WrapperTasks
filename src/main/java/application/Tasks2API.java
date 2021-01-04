@@ -63,7 +63,7 @@ public class Tasks2API implements TasksAppAPI {
   }
 
   private String parseDate(Calendar date) {
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yy");
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy");
     return "\"" + dateFormat.format(date.getTime()) + "\"";
   }
 
