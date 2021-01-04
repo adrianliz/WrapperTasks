@@ -1,7 +1,7 @@
 package application;
 
 import domain.*;
-import domain.enums.ActionWS3270;
+import domain.enums.ActionS3270;
 import domain.enums.ErrorMessage;
 import domain.enums.ScreenIndicator;
 import domain.exceptions.InvalidScreenException;
@@ -13,14 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class ProxyWS3270 implements Proxy3270Emulator {
+public class ProxyS3270 implements Proxy3270Emulator {
   private static final int MAX_ATTEMPTS_SEARCHING_INDICATOR = 10;
   private static final long DEFAULT_TIMEOUT = 2; // s
 
   private final InputStream in;
   private final PrintWriter out;
 
-  public ProxyWS3270(String ws3270Path) throws IOException {
+  public ProxyS3270(String ws3270Path) throws IOException {
     Process ws3270 = Runtime.getRuntime().exec(ws3270Path);
     in = ws3270.getInputStream();
     out = new PrintWriter(ws3270.getOutputStream());
@@ -36,7 +36,7 @@ public class ProxyWS3270 implements Proxy3270Emulator {
       buffer.append((char) in.read());
     }
 
-    return new ResponseWS3270(buffer.toString());
+    return new ResponseS3270(buffer.toString());
   }
 
   private Response3270 syncOutSend(String text) throws IOException {
@@ -46,11 +46,11 @@ public class ProxyWS3270 implements Proxy3270Emulator {
     return syncInputRead();
   }
 
-  private Response3270 executeCommand(ActionWS3270 action) throws IOException {
+  private Response3270 executeCommand(ActionS3270 action) throws IOException {
     return syncOutSend(action.toString());
   }
 
-  private Response3270 executeCommand(ActionWS3270 action, List<String> params) throws IOException {
+  private Response3270 executeCommand(ActionS3270 action, List<String> params) throws IOException {
 
     StringJoiner command = new StringJoiner(",", action + "(", ")");
 
@@ -64,23 +64,23 @@ public class ProxyWS3270 implements Proxy3270Emulator {
     List<String> params = new ArrayList<>();
     params.add(ip + ":" + port);
 
-    return executeCommand(ActionWS3270.CONNECT, params);
+    return executeCommand(ActionS3270.CONNECT, params);
   }
 
   public Response3270 disconnect() throws IOException {
-    return executeCommand(ActionWS3270.DISCONNECT);
+    return executeCommand(ActionS3270.DISCONNECT);
   }
 
   public Response3270 syncBufferRead(long timeout) throws IOException {
     List<String> params = new ArrayList<>();
     params.add(timeout + "");
-    params.add(ActionWS3270.OUTPUT.toString());
+    params.add(ActionS3270.OUTPUT.toString());
 
     // This WAIT blocks ws3270 process and this process (because IN stream is blocking)
     // First ASCII is mandatory despite of WAIT implementation (see WS3270 documentation)
-    Response3270 ascii = executeCommand(ActionWS3270.ASCII);
-    if (executeCommand(ActionWS3270.WAIT, params).success()) {
-      return executeCommand(ActionWS3270.ASCII);
+    Response3270 ascii = executeCommand(ActionS3270.ASCII);
+    if (executeCommand(ActionS3270.WAIT, params).success()) {
+      return executeCommand(ActionS3270.ASCII);
     }
 
     return ascii;
@@ -94,7 +94,7 @@ public class ProxyWS3270 implements Proxy3270Emulator {
   public Response3270 syncWrite(String text) throws IOException {
     List<String> params = new ArrayList<>();
     params.add(text);
-    return executeCommand(ActionWS3270.STRING, params);
+    return executeCommand(ActionS3270.STRING, params);
   }
 
   public void waitScreen(ScreenIndicator indicator, long timeout)
@@ -124,10 +124,10 @@ public class ProxyWS3270 implements Proxy3270Emulator {
   }
 
   public Response3270 clearFields() throws IOException {
-    return executeCommand(ActionWS3270.ERASE_INPUT);
+    return executeCommand(ActionS3270.ERASE_INPUT);
   }
 
   public Response3270 enter() throws IOException {
-    return executeCommand(ActionWS3270.ENTER);
+    return executeCommand(ActionS3270.ENTER);
   }
 }

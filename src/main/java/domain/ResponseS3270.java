@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 
-public class ResponseWS3270 implements Response3270 {
+public class ResponseS3270 implements Response3270 {
   private static final String DATA_INDICATOR = "data:";
   private static final String CONNECTED_INDICATOR = "C";
 
@@ -14,7 +14,7 @@ public class ResponseWS3270 implements Response3270 {
   private String prompt;
   private SuccessIndicator successIndicator;
 
-  public ResponseWS3270(String rawResponse) throws IOException {
+  public ResponseS3270(String rawResponse) throws IOException {
     if (rawResponse != null) {
       BufferedReader screenReader = new BufferedReader(new StringReader(rawResponse));
       StringBuilder dataBuilder = new StringBuilder();

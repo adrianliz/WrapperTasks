@@ -23,7 +23,6 @@ public class Task {
       int maxDescriptionLength)
       throws InvalidTask {
 
-    // TODO: comprobar que el date sea valido, nombres no vacios, etc.
     validate(name, description, maxNameLength, maxDescriptionLength);
 
     this.id = id;

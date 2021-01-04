@@ -1,7 +1,7 @@
 package infraestructure;
 
 import application.MusicAPI;
-import application.ProxyWS3270;
+import application.ProxyS3270;
 import application.Tasks2API;
 import domain.MainframeAPI;
 import domain.Proxy3270Emulator;
@@ -17,23 +17,33 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Properties;
 
 @WebServlet(
     name = "login",
     urlPatterns = {"/login"})
 public class ServletLogin extends HttpServlet {
+  private final static String CONFIG = "/config.properties";
+  private final static String S3270_PATH = "s3270_path";
+
   private Proxy3270Emulator proxy;
   private MainframeAPI mainframe;
   private TasksAppAPI tasksApp;
 
   private String initError;
 
+  private String getS3270Path() throws IOException {
+    Properties config = new Properties();
+    config.load(this.getClass().getResourceAsStream(CONFIG));
+    return config.getProperty(S3270_PATH);
+  }
+
   @Override
   public void init() throws ServletException {
     super.init();
 
     try {
-      proxy = new ProxyWS3270("ws3270");
+      proxy = new ProxyS3270(getS3270Path());
       mainframe = new MusicAPI(proxy);
       tasksApp = new Tasks2API(proxy, mainframe);
     } catch (IOException ex) {
