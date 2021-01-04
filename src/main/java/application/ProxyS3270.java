@@ -17,13 +17,14 @@ public class ProxyS3270 implements Proxy3270Emulator {
   private static final int MAX_ATTEMPTS_SEARCHING_INDICATOR = 10;
   private static final long DEFAULT_TIMEOUT = 3; // s
 
+  private final Process s3270;
   private final InputStream in;
   private final PrintWriter out;
 
   public ProxyS3270(String ws3270Path) throws IOException {
-    Process ws3270 = Runtime.getRuntime().exec(ws3270Path);
-    in = ws3270.getInputStream();
-    out = new PrintWriter(ws3270.getOutputStream());
+    s3270 = Runtime.getRuntime().exec(ws3270Path);
+    in = s3270.getInputStream();
+    out = new PrintWriter(s3270.getOutputStream());
   }
 
   private Response3270 syncInputRead() throws IOException {
@@ -68,7 +69,12 @@ public class ProxyS3270 implements Proxy3270Emulator {
   }
 
   public Response3270 disconnect() throws IOException {
-    return executeCommand(ActionS3270.DISCONNECT);
+    Response3270 response = executeCommand(ActionS3270.DISCONNECT);
+    in.close();
+    out.close();
+    s3270.destroy();
+
+    return response;
   }
 
   public Response3270 syncBufferRead(long timeout) throws IOException {

@@ -10,6 +10,7 @@ import domain.enums.Job;
 import domain.exceptions.AuthException;
 import domain.exceptions.InvalidScreenException;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,14 +24,8 @@ import java.util.Properties;
     name = "login",
     urlPatterns = {"/login"})
 public class ServletLogin extends HttpServlet {
-  private final static String CONFIG = "/config.properties";
-  private final static String S3270_PATH = "s3270_path";
-
-  private Proxy3270Emulator proxy;
-  private MainframeAPI mainframe;
-  private TasksAppAPI tasksApp;
-
-  private String initError;
+  private static final String CONFIG = "/config.properties";
+  private static final String S3270_PATH = "s3270_path";
 
   private String getS3270Path() throws IOException {
     Properties config = new Properties();
@@ -38,52 +33,36 @@ public class ServletLogin extends HttpServlet {
     return config.getProperty(S3270_PATH);
   }
 
-  @Override
-  public void init() throws ServletException {
-    super.init();
+  protected void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
+
+    Proxy3270Emulator emulator = null;
 
     try {
-      proxy = new ProxyS3270(getS3270Path());
-      mainframe = new MusicAPI(proxy);
-      tasksApp = new Tasks2API(proxy, mainframe);
-    } catch (IOException ex) {
-      initError = ex.getMessage();
-    }
-  }
+      emulator = new ProxyS3270(getS3270Path());
+      MainframeAPI mainframe = new MusicAPI(emulator);
+      TasksAppAPI tasksApp = new Tasks2API(emulator, mainframe);
+      emulator.connect(request.getParameter("IP"), request.getParameter("port"));
+      mainframe.login(request.getParameter("user"), request.getParameter("password"));
+      mainframe.executeJob(Job.TASKS2);
 
-  protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws IOException, ServletException {
+      HttpSession session = request.getSession(true);
+      session.setAttribute("emulator", emulator);
+      session.setAttribute("mainframe", mainframe);
+      session.setAttribute("tasksApp", tasksApp);
 
-    if (initError != null) {
-      request.setAttribute("errorMessage", initError);
-      request.getRequestDispatcher("index.jsp").forward(request, response);
-    } else {
+      response.sendRedirect(request.getContextPath() + "/menu.jsp");
+    } catch (AuthException | InvalidScreenException | IOException ex) {
       try {
-        String user = request.getParameter("user");
-        String pwd = request.getParameter("password");
-        String IP = request.getParameter("IP");
-        String port = request.getParameter("port");
-
-        proxy.connect(IP, port);
-        mainframe.login(user, pwd);
-        mainframe.executeJob(Job.TASKS2);
-
-        HttpSession session = request.getSession(true);
-        session.setAttribute("proxy", proxy);
-        session.setAttribute("mainframe", mainframe);
-        session.setAttribute("tasksApp", tasksApp);
-
-        response.sendRedirect(request.getContextPath() + "/menu.jsp");
-      } catch (AuthException | InvalidScreenException | IOException ex) {
-        try {
-          proxy.disconnect();
+        if (emulator != null) {
+          emulator.disconnect();
           request.setAttribute("errorMessage", ex.getMessage());
-        } catch (IOException ex2) {
-          request.setAttribute("errorMessage", ex2.getMessage());
         }
-
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+      } catch (IOException ex2) {
+        request.setAttribute("errorMessage", ex2.getMessage());
       }
+
+      request.getRequestDispatcher("index.jsp").forward(request, response);
     }
   }
 }

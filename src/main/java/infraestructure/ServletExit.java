@@ -24,15 +24,15 @@ public class ServletExit extends HttpServlet {
     HttpSession session = request.getSession(false);
 
     if (session != null) {
-      Proxy3270Emulator proxy = (Proxy3270Emulator) session.getAttribute("proxy");
+      Proxy3270Emulator emulator = (Proxy3270Emulator) session.getAttribute("emulator");
       MainframeAPI mainframe = (MainframeAPI) session.getAttribute("mainframe");
       TasksAppAPI tasksApp = (TasksAppAPI) session.getAttribute("tasksApp");
 
-      if ((tasksApp != null) && (mainframe != null) && (proxy != null)) {
+      if ((tasksApp != null) && (mainframe != null) && (emulator != null)) {
         try {
           tasksApp.exit();
+          emulator.disconnect();
           mainframe.finishJob(Job.TASKS2);
-          proxy.disconnect();
 
           session.invalidate();
           response.sendRedirect(request.getContextPath() + "/index.jsp");

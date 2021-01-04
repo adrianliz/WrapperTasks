@@ -11,7 +11,7 @@
 	<title>Tasks2</title>
 </head>
 <body>
-	<div class="container mt-5">
+	<div class="container mt-2">
 		<%
 			Boolean disableBack = (Boolean) session.getAttribute("disableBack");
 			if ((disableBack == null) || (!disableBack)) {
@@ -29,7 +29,7 @@
 		<% } %>
 
 		<div class="row-6 d-flex align-items-center justify-content-center mx-auto">
-			<div class="col-6 mt-5">
+			<div class="col-6 mt-2">
 				<h1 class="display-4 text-center">Add new task</h1>
 				<form method="POST" action="add">
 					<div class="form-group">
@@ -52,34 +52,34 @@
 					<div class="text-right">
 						<button type="submit" class="btn btn-success">Submit</button>
 					</div>
-
-					<%
-						String errorMessage;
-						if ((errorMessage = (String) request.getAttribute("errorMessage")) != null) {
-					%>
-					<div class="mt-3 alert alert-danger alert-dismissible fade show" role="alert">
-						<strong>
-							<%= errorMessage %>
-						</strong>
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<% } %>
-
-					<%
-						String successMessage = (String) request.getAttribute("successMessage");
-						if (successMessage != null) {
-					%>
-					<div class="mt-3 alert alert-success alert-dismissible fade show" role="alert">
-						<strong><%= successMessage %>
-						</strong>
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<% } %>
 				</form>
+
+				<%
+					String errorMessage;
+					if ((errorMessage = (String) request.getAttribute("errorMessage")) != null) {
+				%>
+				<div class="mt-2 alert alert-danger alert-dismissible fade show" role="alert">
+					<strong>
+						<%= errorMessage %>
+					</strong>
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<% } %>
+
+				<%
+					String successMessage = (String) request.getAttribute("successMessage");
+					if (successMessage != null) {
+				%>
+				<div class="mt-2 alert alert-success alert-dismissible fade show" role="alert">
+					<strong><%= successMessage %>
+					</strong>
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<% } %>
 			</div>
 		</div>
 	</div>

@@ -20,9 +20,9 @@
 	<title>Tasks2</title>
 </head>
 <body>
-	<div class="container mt-5">
+	<div class="container mt-2">
 		<div class="row-6 d-flex align-items-center justify-content-center mx-auto">
-			<div class="col-6 mt-5">
+			<div class="col-6 mt-2">
 				<h1 class="display-4 text-center">Login in Tasks2</h1>
 				<form method="POST" action="login">
 					<div class="form-group">
@@ -45,27 +45,27 @@
 					<div class="text-right">
 						<button type="submit" class="btn btn-primary" id="loginButton">Login</button>
 					</div>
-
-					<%
-						String errorMessage;
-						if ((errorMessage = (String) request.getAttribute("errorMessage")) != null) {
-					%>
-					<div class="mt-3 alert alert-danger alert-dismissible fade show" role="alert">
-						<strong>
-							<%= errorMessage %>
-						</strong>
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<% } %>
 				</form>
 
-				<div class="mt-2 text-center">
-					<div class="spinner-grow text-primary" role="status" id="loader" style="display:none">
+				<div class="mb-2 text-center">
+					<div class="spinner-border text-primary" role="status" id="loader" style="display:none">
 						<span class="sr-only">Loading...</span>
 					</div>
 				</div>
+
+				<%
+					String errorMessage;
+					if ((errorMessage = (String) request.getAttribute("errorMessage")) != null) {
+				%>
+				<div class="mt-3 alert alert-danger alert-dismissible fade show" role="alert">
+					<strong>
+						<%= errorMessage %>
+					</strong>
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<% } %>
 			</div>
 		</div>
 	</div>
