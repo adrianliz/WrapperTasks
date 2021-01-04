@@ -10,7 +10,6 @@ import domain.enums.Job;
 import domain.exceptions.AuthException;
 import domain.exceptions.InvalidScreenException;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -51,7 +50,7 @@ public class ServletLogin extends HttpServlet {
       session.setAttribute("mainframe", mainframe);
       session.setAttribute("tasksApp", tasksApp);
 
-      response.sendRedirect(request.getContextPath() + "/menu.jsp");
+      request.getRequestDispatcher("menu.jsp").forward(request, response);
     } catch (AuthException | InvalidScreenException | IOException ex) {
       try {
         if (emulator != null) {

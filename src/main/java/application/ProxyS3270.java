@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 public class ProxyS3270 implements Proxy3270Emulator {
-  private static final int MAX_ATTEMPTS_SEARCHING_INDICATOR = 10;
+  private static final int MAX_ATTEMPTS_SEARCHING_INDICATOR = 20;
   private static final long DEFAULT_TIMEOUT = 3; // s
 
   private final Process s3270;
@@ -113,7 +113,7 @@ public class ProxyS3270 implements Proxy3270Emulator {
       Response3270 response = syncBufferRead(timeout);
       if (response.isConnected()) {
         if (response.success()) {
-          indicatorFound = response.getParsedData().contains(indicator.toString());
+          indicatorFound = response.contains(indicator.toString());
         }
         attempts++;
       } else {
