@@ -19,7 +19,7 @@ Práctica 3 de la asignatura de SL
 	8. exit app :white_check_mark:
 	9. logout :white_check_mark:
 - P3 -> Diagrama de clases :white_check_mark:
-- P4 -> Implementación
+- P4 -> Implementación :white_check_mark:
     1. Estructura básica (v1.0.0) :white_check_mark:
     2. Conectarse y desconectarse (v1.1.0) :white_check_mark:
     3. Login y logout (v1.2.0) :white_check_mark:
@@ -30,7 +30,7 @@ Práctica 3 de la asignatura de SL
     8. Guardar tareas (v1.7.0) :white_check_mark:
     9. Listar tareas (v1.8.0) :white_check_mark:
     10. Buscar tareas (v1.9.0) :white_check_mark:
-    11. Sin definir (v2.0.0)
+    11. Web (v2.0.0) :white_check_mark:
     
 # Todoist
 [Lista de tareas](https://todoist.com/app/#project%2F2250526740)

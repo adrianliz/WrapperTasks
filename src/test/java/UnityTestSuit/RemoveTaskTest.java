@@ -26,8 +26,8 @@ public class RemoveTaskTest {
           }
 
           @Override
-          public boolean contains(String indicator) {
-            return indicator.equals("");
+          public boolean contains(ScreenIndicator indicator) {
+            return false;
           }
 
           @Override
@@ -49,8 +49,8 @@ public class RemoveTaskTest {
 				}
 
 				@Override
-				public boolean contains(String indicator) {
-					return indicator.equals(ScreenIndicator.TASKS2_TASK_NOT_FOUND.toString());
+				public boolean contains(ScreenIndicator indicator) {
+					return indicator.equals(ScreenIndicator.TASKS2_TASK_NOT_FOUND);
 				}
 
 				@Override
@@ -79,6 +79,6 @@ public class RemoveTaskTest {
 																			 new FakeMainframeAPI(Job.TASKS2));
 
 		TasksAppException ex = assertThrows(TasksAppException.class, () -> tasks2.removeTask(1));
-		assertEquals(ex.getErrorMessage(), ErrorMessage.TASK_NOT_FOUND);
+		assertEquals(ex.getSimpleMessage(), ErrorMessage.TASK_NOT_FOUND.toString());
 	}
 }

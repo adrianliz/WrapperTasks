@@ -1,7 +1,7 @@
 package domain;
 
 import domain.enums.ErrorMessage;
-import domain.exceptions.TaskNotValid;
+import domain.exceptions.InvalidTask;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,19 +21,18 @@ public class Task {
       Calendar date,
       int maxNameLength,
       int maxDescriptionLength)
-      throws TaskNotValid {
-
-    // TODO: comprobar que el date sea valido, nombres no vacios, etc.
-    validate(name, description, maxNameLength, maxDescriptionLength);
+      throws InvalidTask {
 
     this.id = id;
     this.name = name;
     this.description = description;
     this.date = date;
+
+    validate(maxNameLength, maxDescriptionLength);
   }
 
   public Task(Matcher taskFinder) throws ParseException {
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     id = Integer.parseInt(taskFinder.group(1));
     name = taskFinder.group(2);
@@ -58,18 +57,38 @@ public class Task {
     return date;
   }
 
-  private void validate(String name, String description, int maxNameLength, int maxDescLength)
-      throws TaskNotValid {
+  private void validate(int maxNameLength, int maxDescLength)
+      throws InvalidTask {
 
-    if (name.length() > maxNameLength) throw new TaskNotValid(ErrorMessage.TASK_NAME_TOO_LONG);
+    if (date == null) throw new InvalidTask(ErrorMessage.TASK_DATE_INVALID);
+    if (name == null || name.length() == 0 || name.matches("\\s+"))
+      throw new InvalidTask(ErrorMessage.TASK_NAME_INVALID);
+    if (description == null || description.length() == 0 || description.matches("\\s+"))
+      throw new InvalidTask(ErrorMessage.TASK_DESC_INVALID);
+    if (name.length() > maxNameLength) throw new InvalidTask(ErrorMessage.TASK_NAME_TOO_LONG);
     if (description.length() > maxDescLength)
-      throw new TaskNotValid(ErrorMessage.TASK_DESC_TOO_LONG);
+      throw new InvalidTask(ErrorMessage.TASK_DESC_TOO_LONG);
   }
 
   @Override
   public String toString() {
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     return id + " " + name + " " + description + " " + sdf.format(date.getTime());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Task task = (Task) o;
+
+    return id == task.id;
+  }
+
+  @Override
+  public int hashCode() {
+    return id;
   }
 }

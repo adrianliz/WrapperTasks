@@ -1,6 +1,6 @@
 package domain.enums;
 
-public enum ActionWS3270 {
+public enum ActionS3270 {
   ASCII("ascii"),
   CONNECT("connect"),
   DISCONNECT("disconnect"),
@@ -12,7 +12,7 @@ public enum ActionWS3270 {
 
   private final String action;
 
-  ActionWS3270(String action) {
+  ActionS3270(String action) {
     this.action = action;
   }
 

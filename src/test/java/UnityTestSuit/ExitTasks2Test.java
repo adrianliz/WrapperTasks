@@ -24,7 +24,7 @@ public class ExitTasks2Test {
 																			 new FakeMainframeAPI(null));
 
 		TasksAppException ex = assertThrows(TasksAppException.class, tasks2::exit);
-		assertEquals(ex.getErrorMessage(), ErrorMessage.JOB_NOT_RUNNING);
+		assertEquals(ex.getSimpleMessage(), ErrorMessage.JOB_NOT_RUNNING.toString());
 	}
 
 	@Test
@@ -33,15 +33,6 @@ public class ExitTasks2Test {
 																		   new FakeMainframeAPI(Job.TASKS2, true));
 
 		TasksAppException ex = assertThrows(TasksAppException.class, tasks2::exit);
-		assertEquals(ex.getErrorMessage(), ErrorMessage.JOB_NOT_FINISHED);
-	}
-
-	@Test
-	public void shouldThrowTasksExceptionInvalidScreen() {
-		TasksAppAPI tasks2 = new Tasks2API(new Fake3270Emulator(true),
-			                                 new FakeMainframeAPI(Job.TASKS2));
-
-		TasksAppException ex = assertThrows(TasksAppException.class, tasks2::exit);
-		assertEquals(ex.getErrorMessage(), ErrorMessage.INVALID_SCREEN);
+		assertEquals(ex.getSimpleMessage(), ErrorMessage.JOB_NOT_FINISHED.toString());
 	}
 }

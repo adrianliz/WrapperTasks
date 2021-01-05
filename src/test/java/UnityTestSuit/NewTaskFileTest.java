@@ -25,15 +25,6 @@ public class NewTaskFileTest {
 																	     new FakeMainframeAPI(null));
 
 		TasksAppException ex = assertThrows(TasksAppException.class, tasks2::newTaskFile);
-		assertEquals(ex.getErrorMessage(), ErrorMessage.JOB_NOT_RUNNING);
-	}
-
-	@Test
-	public void shouldThrowTasksExceptionInvalidScreen() {
-		TasksAppAPI tasks2 = new Tasks2API(new Fake3270Emulator(true),
-																		   new FakeMainframeAPI(Job.TASKS2));
-
-		TasksAppException ex = assertThrows(TasksAppException.class, tasks2::newTaskFile);
-		assertEquals(ex.getErrorMessage(), ErrorMessage.INVALID_SCREEN);
+		assertEquals(ex.getSimpleMessage(), ErrorMessage.JOB_NOT_RUNNING.toString());
 	}
 }

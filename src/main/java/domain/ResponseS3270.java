@@ -1,12 +1,13 @@
 package domain;
 
+import domain.enums.ScreenIndicator;
 import domain.enums.SuccessIndicator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 
-public class ResponseWS3270 implements Response3270 {
+public class ResponseS3270 implements Response3270 {
   private static final String DATA_INDICATOR = "data:";
   private static final String CONNECTED_INDICATOR = "C";
 
@@ -14,13 +15,14 @@ public class ResponseWS3270 implements Response3270 {
   private String prompt;
   private SuccessIndicator successIndicator;
 
-  public ResponseWS3270(String rawResponse) throws IOException {
+  public ResponseS3270(String rawResponse) throws IOException {
     if (rawResponse != null) {
       BufferedReader screenReader = new BufferedReader(new StringReader(rawResponse));
       StringBuilder dataBuilder = new StringBuilder();
       String line;
 
-      while ((line = screenReader.readLine()).startsWith(DATA_INDICATOR)) {
+      while (((line = screenReader.readLine()) != null) &&
+              (line.startsWith(DATA_INDICATOR))) {
         dataBuilder.append(line);
         dataBuilder.append("\n");
       }
@@ -32,11 +34,19 @@ public class ResponseWS3270 implements Response3270 {
   }
 
   public String getParsedData() {
-    return data.replaceAll(DATA_INDICATOR + "\\s", "");
+    if (data != null) {
+      return data.replaceAll(DATA_INDICATOR + "\\s", "");
+    }
+
+    return "";
   }
 
-  public boolean contains(String indicator) {
-    return data.contains(indicator);
+  public boolean contains(ScreenIndicator indicator) {
+    if (indicator != null) {
+      return data.contains(indicator.toString());
+    }
+
+    return false;
   }
 
   public boolean success() {
@@ -44,6 +54,10 @@ public class ResponseWS3270 implements Response3270 {
   }
 
   public boolean isConnected() {
-    return prompt.contains(CONNECTED_INDICATOR);
+    if (prompt != null) {
+      return prompt.contains(CONNECTED_INDICATOR);
+    }
+
+    return false;
   }
 }

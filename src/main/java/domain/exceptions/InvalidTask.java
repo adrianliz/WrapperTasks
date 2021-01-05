@@ -2,8 +2,8 @@ package domain.exceptions;
 
 import domain.enums.ErrorMessage;
 
-public class TaskNotValid extends Exception {
-  public TaskNotValid(ErrorMessage message) {
+public class InvalidTask extends Exception {
+  public InvalidTask(ErrorMessage message) {
     super(message.toString());
   }
 }

@@ -1,28 +1,28 @@
 package application;
 
 import domain.*;
-import domain.enums.ActionWS3270;
+import domain.enums.ActionS3270;
+import domain.enums.ErrorMessage;
 import domain.enums.ScreenIndicator;
 import domain.exceptions.InvalidScreenException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class ProxyWS3270 implements Proxy3270Emulator {
-  private static final int MAX_ATTEMPTS_SEARCHING_INDICATOR = 10;
-  private static final long DEFAULT_TIMEOUT = 2; // s
+public class ProxyS3270 implements Proxy3270Emulator {
+  private static final int MAX_ATTEMPTS_SEARCHING_INDICATOR = 6;
+  private static final long DEFAULT_TIMEOUT = 3; // s
 
+  private final Process s3270;
   private final InputStream in;
   private final PrintWriter out;
 
-  public ProxyWS3270(String ws3270Path) throws IOException {
-    Process ws3270 = Runtime.getRuntime().exec(ws3270Path);
-    in = ws3270.getInputStream();
-    out = new PrintWriter(ws3270.getOutputStream());
+  public ProxyS3270(String ws3270Path) throws IOException {
+    s3270 = Runtime.getRuntime().exec(ws3270Path);
+    in = s3270.getInputStream();
+    out = new PrintWriter(s3270.getOutputStream());
   }
 
   private Response3270 syncInputRead() throws IOException {
@@ -35,7 +35,7 @@ public class ProxyWS3270 implements Proxy3270Emulator {
       buffer.append((char) in.read());
     }
 
-    return new ResponseWS3270(buffer.toString());
+    return new ResponseS3270(buffer.toString());
   }
 
   private Response3270 syncOutSend(String text) throws IOException {
@@ -45,11 +45,11 @@ public class ProxyWS3270 implements Proxy3270Emulator {
     return syncInputRead();
   }
 
-  private Response3270 executeCommand(ActionWS3270 action) throws IOException {
+  private Response3270 executeCommand(ActionS3270 action) throws IOException {
     return syncOutSend(action.toString());
   }
 
-  private Response3270 executeCommand(ActionWS3270 action, List<String> params) throws IOException {
+  private Response3270 executeCommand(ActionS3270 action, List<String> params) throws IOException {
 
     StringJoiner command = new StringJoiner(",", action + "(", ")");
 
@@ -63,23 +63,28 @@ public class ProxyWS3270 implements Proxy3270Emulator {
     List<String> params = new ArrayList<>();
     params.add(ip + ":" + port);
 
-    return executeCommand(ActionWS3270.CONNECT, params);
+    return executeCommand(ActionS3270.CONNECT, params);
   }
 
   public Response3270 disconnect() throws IOException {
-    return executeCommand(ActionWS3270.DISCONNECT);
+    Response3270 response = executeCommand(ActionS3270.DISCONNECT);
+    in.close();
+    out.close();
+    s3270.destroy();
+
+    return response;
   }
 
   public Response3270 syncBufferRead(long timeout) throws IOException {
     List<String> params = new ArrayList<>();
     params.add(timeout + "");
-    params.add(ActionWS3270.OUTPUT.toString());
+    params.add(ActionS3270.OUTPUT.toString());
 
     // This WAIT blocks ws3270 process and this process (because IN stream is blocking)
     // First ASCII is mandatory despite of WAIT implementation (see WS3270 documentation)
-    Response3270 ascii = executeCommand(ActionWS3270.ASCII);
-    if (executeCommand(ActionWS3270.WAIT, params).success()) {
-      return executeCommand(ActionWS3270.ASCII);
+    Response3270 ascii = executeCommand(ActionS3270.ASCII);
+    if (executeCommand(ActionS3270.WAIT, params).success()) {
+      return executeCommand(ActionS3270.ASCII);
     }
 
     return ascii;
@@ -91,10 +96,9 @@ public class ProxyWS3270 implements Proxy3270Emulator {
   }
 
   public Response3270 syncWrite(String text) throws IOException {
-
     List<String> params = new ArrayList<>();
     params.add(text);
-    return executeCommand(ActionWS3270.STRING, params);
+    return executeCommand(ActionS3270.STRING, params);
   }
 
   public void waitScreen(ScreenIndicator indicator, long timeout)
@@ -105,12 +109,14 @@ public class ProxyWS3270 implements Proxy3270Emulator {
 
     do {
       Response3270 response = syncBufferRead(timeout);
-
-      if (response.success()) {
-        indicatorFound = response.getParsedData().contains(indicator.toString());
+      if (response.isConnected()) {
+        if (response.success()) {
+          indicatorFound = response.contains(indicator);
+        }
+        attempts++;
+      } else {
+        throw new InvalidScreenException(ErrorMessage.PROXY_NOT_CONNECTED);
       }
-
-      attempts++;
     } while ((!indicatorFound) && (attempts < MAX_ATTEMPTS_SEARCHING_INDICATOR));
 
     if (!indicatorFound) throw new InvalidScreenException(indicator);
@@ -122,10 +128,10 @@ public class ProxyWS3270 implements Proxy3270Emulator {
   }
 
   public Response3270 clearFields() throws IOException {
-    return executeCommand(ActionWS3270.ERASE_INPUT);
+    return executeCommand(ActionS3270.ERASE_INPUT);
   }
 
   public Response3270 enter() throws IOException {
-    return executeCommand(ActionWS3270.ENTER);
+    return executeCommand(ActionS3270.ENTER);
   }
 }

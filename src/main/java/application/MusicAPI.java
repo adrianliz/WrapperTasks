@@ -28,7 +28,7 @@ public class MusicAPI implements MainframeAPI {
     emulator.syncWrite(field);
     emulator.enter();
 
-    if (emulator.syncBufferRead().contains(errorIndicator.toString())) {
+    if (emulator.syncBufferRead().contains(errorIndicator)) {
       emulator.clearFields();
       throw new AuthException(message);
     }
@@ -44,14 +44,14 @@ public class MusicAPI implements MainframeAPI {
           user, ScreenIndicator.MUSIC_USERID_UNAUTHORIZED, ErrorMessage.USERID_UNAUTHORIZED);
       writeLoginField(pwd, ScreenIndicator.MUSIC_PWD_INCORRECT, ErrorMessage.PWD_INCORRECT);
 
-      if (emulator.syncBufferRead().contains(ScreenIndicator.MUSIC_USERID_IN_USE.toString())) {
+      if (emulator.syncBufferRead().contains(ScreenIndicator.MUSIC_USERID_IN_USE)) {
         throw new AuthException(ErrorMessage.USERID_IN_USE);
       }
 
       emulator.enter();
       emulator.waitScreen(ScreenIndicator.MUSIC_COMMAND_LINE);
     } catch (InvalidScreenException ex) {
-      throw new AuthException(ErrorMessage.INVALID_SCREEN);
+      throw new AuthException(ex);
     } catch (IOException ex) {
       throw new AuthException(ErrorMessage.IO);
     }
@@ -64,7 +64,7 @@ public class MusicAPI implements MainframeAPI {
       emulator.enter();
       emulator.waitScreen(ScreenIndicator.MUSIC_MAIN_WINDOW);
     } catch (InvalidScreenException ex) {
-      throw new AuthException(ErrorMessage.INVALID_SCREEN);
+      throw new AuthException(ex);
     } catch (IOException ex) {
       throw new AuthException(ErrorMessage.IO);
     }
