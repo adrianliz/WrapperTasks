@@ -21,25 +21,25 @@
 </head>
 <body>
 	<div class="container mt-2">
-		<div class="row-6 d-flex align-items-center justify-content-center mx-auto">
-			<div class="col-6 mt-2">
-				<h1 class="display-4 text-center">Login in Tasks2</h1>
+		<div class="row-sm-6 d-flex align-items-center justify-content-center mx-auto">
+			<div class="col-sm-6 mt-2">
+				<h1 class="display-4 text-center">Login</h1>
 				<form method="POST" action="login">
 					<div class="form-group">
 						<label for="user">User</label>
-						<input type="text" class="form-control" id="user" name="user" value="prog">
+						<input type="text" class="form-control" id="user" name="user" value="prog" required>
 					</div>
 					<div class="form-group">
 						<label for="password">Password</label>
-						<input type="password" class="form-control" id="password" name="password" value="prog123">
+						<input type="password" class="form-control" id="password" name="password" value="prog123" required>
 					</div>
 					<div class="form-group">
 						<label for="IP">IP</label>
-						<input type="text" class="form-control" id="IP" name="IP" value="155.210.71.101">
+						<input type="text" class="form-control" id="IP" name="IP" value="155.210.71.101" required>
 					</div>
 					<div class="form-group">
 						<label for="port">Port</label>
-						<input type="text" class="form-control" id="port" name="port" value="623">
+						<input type="text" class="form-control" id="port" name="port" value="123" required>
 					</div>
 
 					<div class="text-right">
@@ -47,7 +47,7 @@
 					</div>
 				</form>
 
-				<div class="mb-2 text-center">
+				<div class="mt-2 text-center">
 					<div class="spinner-border text-primary" role="status" id="loader" style="display:none">
 						<span class="sr-only">Loading...</span>
 					</div>

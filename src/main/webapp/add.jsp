@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+
 <html>
 <head>
 	<meta charset="utf-8">
@@ -28,9 +29,9 @@
 		</div>
 		<% } %>
 
-		<div class="row-6 d-flex align-items-center justify-content-center mx-auto">
-			<div class="col-6 mt-2">
-				<h1 class="display-4 text-center">Add new task</h1>
+		<div class="row-sm-6 d-flex align-items-center justify-content-center mx-auto">
+			<div class="col-sm-6 mt-2">
+				<h1 class="display-4 text-center">Add task</h1>
 				<form method="POST" action="add">
 					<div class="form-group">
 						<label for="idTask-add">ID Task</label>

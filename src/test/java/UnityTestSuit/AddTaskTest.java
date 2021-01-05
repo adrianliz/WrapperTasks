@@ -30,8 +30,8 @@ public class AddTaskTest {
           }
 
           @Override
-          public boolean contains(String indicator) {
-            return indicator.equals("");
+          public boolean contains(ScreenIndicator indicator) {
+            return true;
           }
 
           @Override
@@ -52,8 +52,8 @@ public class AddTaskTest {
 			}
 
 			@Override
-			public boolean contains(String indicator) {
-				return indicator.equals(ScreenIndicator.TASKS2_TASK_NUMBER_REPEATED.toString());
+			public boolean contains(ScreenIndicator indicator) {
+				return indicator.equals(ScreenIndicator.TASKS2_TASK_NUMBER_REPEATED);
 			}
 
 			@Override

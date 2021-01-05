@@ -59,15 +59,19 @@
 		</div>
 
 		<div class="row mt-2">
-			<div class="col-2 mr-2">
+			<div class="col-lg-2 m-2">
 				<a class="btn btn-primary" href="new">New task file</a>
 			</div>
 
-			<div class="col-2">
+			<div class="col-lg-2 m-2">
+				<a class="btn btn-primary" href="add.jsp">Add task</a>
+			</div>
+
+			<div class="col-lg-2 m-2">
 				<a class="btn btn-primary" href="list">List tasks</a>
 			</div>
 
-			<div class="col-1">
+			<div class="col-lg-2 m-2">
 				<form class="form-inline" method="POST" action="list">
 					<div class="form-group mb-2">
 						<label class="sr-only" for="date">Date</label>
@@ -78,49 +82,42 @@
 			</div>
 		</div>
 
-		<div class="row mt-2">
-			<div class="col">
-				<div class="text-right mb-2">
-					<a class="btn btn-primary" href="add.jsp">Add task</a>
-				</div>
 
-				<div class="card-columns mt-2">
-					<%
-						List<Task> tasks = (List<Task>) session.getAttribute("tasks");
-						if (tasks != null) {
-							for (Task task : tasks) {
-					%>
-					<div class="card shadow p-3 mb-5 bg-white rounded">
-						<div class="card-body">
-							<h5 class="card-title"><%= task.getName() %>
-							</h5>
-							<p class="card-text"><%= task.getDescription() %>
-							</p>
-							<p class="card-text">
-								<small class="text-muted">
-									<%
-										SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-										String formattedDate = sdf.format(task.getDate().getTime());
-									%>
-									<%= formattedDate %>
-								</small>
-							</p>
-							<form method="POST" action="remove">
-								<label>
-									<input name="idTask" value=<%= task.getId()%> hidden>
-								</label>
-								<div class="text-right">
-									<button type="submit" class="btn btn-danger mb-2">Remove</button>
-								</div>
-							</form>
+		<div class="card-columns m-2">
+			<%
+				List<Task> tasks = (List<Task>) session.getAttribute("tasks");
+				if (tasks != null) {
+					for (Task task : tasks) {
+			%>
+			<div class="card shadow p-3 mb-5 bg-white rounded">
+				<div class="card-body">
+					<h5 class="card-title"><%= task.getName() %>
+					</h5>
+					<p class="card-text"><%= task.getDescription() %>
+					</p>
+					<p class="card-text">
+						<small class="text-muted">
+							<%
+								SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+								String formattedDate = sdf.format(task.getDate().getTime());
+							%>
+							<%= formattedDate %>
+						</small>
+					</p>
+					<form method="POST" action="remove">
+						<label>
+							<input name="idTask" value=<%= task.getId()%> hidden>
+						</label>
+						<div class="text-right">
+							<button type="submit" class="btn btn-danger mb-2">Remove</button>
 						</div>
-					</div>
-					<%
-							}
-						}
-					%>
+					</form>
 				</div>
 			</div>
+			<%
+					}
+				}
+			%>
 		</div>
 	</div>
 

@@ -48,9 +48,9 @@ public class Tasks2API implements TasksAppAPI {
 
     if (errorIndicator != null) {
       Response3270 response = emulator.syncBufferRead();
-      if ((! response.contains(ScreenIndicator.TASKS2_TASK_NAME_FIELD.toString()) &&
-          (response.contains(errorIndicator.toString())))) {
-        if (response.contains(ScreenIndicator.TASKS2_PRESS_ENTER_TO_CONTINUE.toString())) {
+      if ((! response.contains(ScreenIndicator.TASKS2_TASK_NAME_FIELD) &&
+          (response.contains(errorIndicator)))) {
+        if (response.contains(ScreenIndicator.TASKS2_PRESS_ENTER_TO_CONTINUE)) {
           emulator.enter();
         }
         throw new TasksAppException(Job.TASKS2, message);
@@ -90,7 +90,7 @@ public class Tasks2API implements TasksAppAPI {
     validateTasks2Running();
 
     try {
-      if (!emulator.syncBufferRead().contains(ScreenIndicator.TASKS2_ADD_TASK_WINDOW.toString())) {
+      if (!emulator.syncBufferRead().contains(ScreenIndicator.TASKS2_ADD_TASK_WINDOW)) {
         emulator.syncWrite(Tasks2Option.ADD_TASK.toString());
         emulator.enter();
         emulator.waitScreen(ScreenIndicator.TASKS2_ADD_TASK_WINDOW);
@@ -155,7 +155,7 @@ public class Tasks2API implements TasksAppAPI {
         response = emulator.syncBufferRead();
         emulator.enter();
         buffer.append(response.getParsedData());
-      } while (response.contains(ScreenIndicator.TASKS2_MORE.toString()));
+      } while (response.contains(ScreenIndicator.TASKS2_MORE));
 
       Matcher taskFinder = RAW_TASK_REGEXP.matcher(buffer);
       while (taskFinder.find()) {

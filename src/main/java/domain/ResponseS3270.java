@@ -1,5 +1,6 @@
 package domain;
 
+import domain.enums.ScreenIndicator;
 import domain.enums.SuccessIndicator;
 
 import java.io.BufferedReader;
@@ -40,9 +41,9 @@ public class ResponseS3270 implements Response3270 {
     return "";
   }
 
-  public boolean contains(String indicator) {
+  public boolean contains(ScreenIndicator indicator) {
     if (indicator != null) {
-      return data.contains(indicator);
+      return data.contains(indicator.toString());
     }
 
     return false;

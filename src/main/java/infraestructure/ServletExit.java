@@ -35,7 +35,7 @@ public class ServletExit extends HttpServlet {
           mainframe.finishJob(Job.TASKS2);
 
           session.invalidate();
-          request.getRequestDispatcher("index.jsp").forward(request, response);
+          response.sendRedirect(request.getContextPath() + "/index.jsp");
         } catch (TasksAppException | IOException ex) {
           request.setAttribute("errorMessage", ex.getMessage());
           request.getRequestDispatcher("menu.jsp").forward(request, response);

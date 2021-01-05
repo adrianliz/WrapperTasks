@@ -50,13 +50,14 @@ public class ServletLogin extends HttpServlet {
       session.setAttribute("mainframe", mainframe);
       session.setAttribute("tasksApp", tasksApp);
 
-      request.getRequestDispatcher("menu.jsp").forward(request, response);
+      response.sendRedirect(request.getContextPath() + "/menu.jsp");
     } catch (AuthException | InvalidScreenException | IOException ex) {
       try {
         if (emulator != null) {
           emulator.disconnect();
-          request.setAttribute("errorMessage", ex.getMessage());
         }
+
+        request.setAttribute("errorMessage", ex.getMessage());
       } catch (IOException ex2) {
         request.setAttribute("errorMessage", ex2.getMessage());
       }

@@ -26,8 +26,8 @@ public class LoginTest {
 			}
 
 			@Override
-			public boolean contains(String indicator) {
-				return indicator.equals("");
+			public boolean contains(ScreenIndicator indicator) {
+				return false;
 			}
 
 			@Override
@@ -48,8 +48,8 @@ public class LoginTest {
 			}
 
 			@Override
-			public boolean contains(String indicator) {
-				return indicator.equals(ScreenIndicator.MUSIC_USERID_UNAUTHORIZED.toString());
+			public boolean contains(ScreenIndicator indicator) {
+				return indicator.equals(ScreenIndicator.MUSIC_USERID_UNAUTHORIZED);
 			}
 
 			@Override
@@ -70,8 +70,8 @@ public class LoginTest {
 			}
 
 			@Override
-			public boolean contains(String indicator) {
-				return indicator.equals(ScreenIndicator.MUSIC_PWD_INCORRECT.toString());
+			public boolean contains(ScreenIndicator indicator) {
+				return indicator.equals(ScreenIndicator.MUSIC_PWD_INCORRECT);
 			}
 
 			@Override
@@ -92,8 +92,8 @@ public class LoginTest {
 			}
 
 			@Override
-			public boolean contains(String indicator) {
-				return indicator.equals(ScreenIndicator.MUSIC_USERID_IN_USE.toString());
+			public boolean contains(ScreenIndicator indicator) {
+				return indicator.equals(ScreenIndicator.MUSIC_USERID_IN_USE);
 			}
 
 			@Override
