@@ -1,4 +1,4 @@
-package infraestructure;
+package infrastructure;
 
 import domain.Task;
 import domain.TasksAppAPI;
@@ -26,7 +26,6 @@ public class ServletListTasks extends HttpServlet {
   private TasksAppAPI tasksApp;
 
   private boolean initialize(HttpServletRequest request) throws UnsupportedEncodingException {
-    request.setCharacterEncoding("UTF-8");
     session = request.getSession(false);
 
     if (session != null) {

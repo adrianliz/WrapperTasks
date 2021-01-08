@@ -1,9 +1,6 @@
-package infraestructure;
+package infrastructure;
 
-import domain.MainframeAPI;
-import domain.Proxy3270Emulator;
 import domain.TasksAppAPI;
-import domain.enums.Job;
 import domain.exceptions.TasksAppException;
 
 import javax.servlet.ServletException;
@@ -15,31 +12,28 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet(
-    name = "ServletExit",
-    urlPatterns = {"/exit"})
-public class ServletExit extends HttpServlet {
+    name = "ServletNewTaskFile",
+    urlPatterns = {"/new"})
+public class ServletNewTaskFile extends HttpServlet {
+
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+      throws ServletException, IOException {
 
     HttpSession session = request.getSession(false);
 
     if (session != null) {
-      Proxy3270Emulator emulator = (Proxy3270Emulator) session.getAttribute("emulator");
-      MainframeAPI mainframe = (MainframeAPI) session.getAttribute("mainframe");
       TasksAppAPI tasksApp = (TasksAppAPI) session.getAttribute("tasksApp");
 
-      if ((tasksApp != null) && (mainframe != null) && (emulator != null)) {
+      if (tasksApp != null) {
         try {
-          tasksApp.exit();
-          emulator.disconnect();
-          mainframe.finishJob(Job.TASKS2);
-
-          session.invalidate();
-          response.sendRedirect(request.getContextPath() + "/index.jsp");
-        } catch (TasksAppException | IOException ex) {
+          tasksApp.newTaskFile();
+          session.removeAttribute("tasks");
+          request.setAttribute("successMessage", "New task file created");
+        } catch (TasksAppException ex) {
           request.setAttribute("errorMessage", ex.getMessage());
-          request.getRequestDispatcher("menu.jsp").forward(request, response);
         }
+
+        request.getRequestDispatcher("menu.jsp").forward(request, response);
       } else {
         ServletUtils.dispatchUserNotLogged(request, response);
       }

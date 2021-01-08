@@ -1,6 +1,9 @@
-package infraestructure;
+package infrastructure;
 
+import domain.MainframeAPI;
+import domain.Proxy3270Emulator;
 import domain.TasksAppAPI;
+import domain.enums.Job;
 import domain.exceptions.TasksAppException;
 
 import javax.servlet.ServletException;
@@ -12,26 +15,31 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet(
-    name = "ServletSaveTasks",
-    urlPatterns = {"/save"})
-public class ServletSaveTasks extends HttpServlet {
+    name = "ServletExit",
+    urlPatterns = {"/exit"})
+public class ServletExit extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    throws ServletException, IOException {
 
     HttpSession session = request.getSession(false);
 
     if (session != null) {
+      Proxy3270Emulator emulator = (Proxy3270Emulator) session.getAttribute("emulator");
+      MainframeAPI mainframe = (MainframeAPI) session.getAttribute("mainframe");
       TasksAppAPI tasksApp = (TasksAppAPI) session.getAttribute("tasksApp");
 
-      if (tasksApp != null) {
+      if ((tasksApp != null) && (mainframe != null) && (emulator != null)) {
         try {
-          tasksApp.saveTasks();
-          request.setAttribute("successMessage", "Tasks saved");
-        } catch (TasksAppException ex) {
-          request.setAttribute("errorMessage", ex.getMessage());
-        }
+          tasksApp.exit();
+          emulator.disconnect();
+          mainframe.finishJob(Job.TASKS2);
 
-        request.getRequestDispatcher("menu.jsp").forward(request, response);
+          session.invalidate();
+          response.sendRedirect(request.getContextPath() + "/index.jsp");
+        } catch (TasksAppException | IOException ex) {
+          request.setAttribute("errorMessage", ex.getMessage());
+          request.getRequestDispatcher("menu.jsp").forward(request, response);
+        }
       } else {
         ServletUtils.dispatchUserNotLogged(request, response);
       }

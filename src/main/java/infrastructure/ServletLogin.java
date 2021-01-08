@@ -1,4 +1,4 @@
-package infraestructure;
+package infrastructure;
 
 import application.MusicAPI;
 import application.ProxyS3270;

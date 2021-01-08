@@ -1,4 +1,4 @@
-package infraestructure;
+package infrastructure;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package infraestructure;
+package infrastructure;
 
 import domain.TasksAppAPI;
 import domain.exceptions.TasksAppException;
@@ -12,10 +12,9 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet(
-    name = "ServletNewTaskFile",
-    urlPatterns = {"/new"})
-public class ServletNewTaskFile extends HttpServlet {
-
+    name = "ServletSaveTasks",
+    urlPatterns = {"/save"})
+public class ServletSaveTasks extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
@@ -26,9 +25,8 @@ public class ServletNewTaskFile extends HttpServlet {
 
       if (tasksApp != null) {
         try {
-          tasksApp.newTaskFile();
-          session.removeAttribute("tasks");
-          request.setAttribute("successMessage", "New task file created");
+          tasksApp.saveTasks();
+          request.setAttribute("successMessage", "Tasks saved");
         } catch (TasksAppException ex) {
           request.setAttribute("errorMessage", ex.getMessage());
         }

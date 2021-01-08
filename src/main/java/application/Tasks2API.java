@@ -19,8 +19,8 @@ import java.util.regex.Pattern;
 
 public class Tasks2API implements TasksAppAPI {
   private static final String TASK_NUMBER_REGEXP = ".*TASK NUMBER:\\s(\\d+).*\\n";
-  private static final String TASK_NAME_REGEXP = ".*NAME\\s+:\\s(.*[\\wá-úÁ-Ú]+).*\\n";
-  private static final String TASK_DESC_REGEXP = ".*DESCRIPTION:\\s(.*[\\wá-úÁ-Ú]+).*\\n";
+  private static final String TASK_NAME_REGEXP = ".*NAME\\s+:\\s(.*)\\n";
+  private static final String TASK_DESC_REGEXP = ".*DESCRIPTION:\\s(.*)\\n";
   private static final String TASK_DATE_REGEXP = "[\\-T\\sMore.]*DATE\\s+:\\s(\\d+/\\d+/\\d+).*\\n";
 
   private static final Pattern RAW_TASK_REGEXP =
@@ -64,7 +64,7 @@ public class Tasks2API implements TasksAppAPI {
 
   private String parseDate(Calendar date) {
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy");
-    return "\"" + dateFormat.format(date.getTime()) + "\"";
+    return dateFormat.format(date.getTime());
   }
 
   public void newTaskFile() throws TasksAppException {
@@ -176,7 +176,7 @@ public class Tasks2API implements TasksAppAPI {
     List<Task> dateTasks = new ArrayList<>();
 
     for (Task task: listTasks()) {
-      if (parseDate(task.getDate()).equals(parseDate(date)))
+      if (task.getDate().equals(date))
         dateTasks.add(task);
     }
 

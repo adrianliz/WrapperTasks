@@ -1,12 +1,16 @@
 package application;
 
-import domain.*;
+import domain.Proxy3270Emulator;
+import domain.Response3270;
+import domain.ResponseS3270;
 import domain.enums.ActionS3270;
 import domain.enums.ErrorMessage;
 import domain.enums.ScreenIndicator;
 import domain.exceptions.InvalidScreenException;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -54,8 +58,10 @@ public class ProxyS3270 implements Proxy3270Emulator {
     StringJoiner command = new StringJoiner(",", action + "(", ")");
 
     for (String param : params) {
-      command.add(param);
+      command.add("\"" + param + "\"");
     }
+
+    if (action.equals(ActionS3270.STRING)) System.err.println(command.toString());
     return syncOutSend(command.toString());
   }
 
