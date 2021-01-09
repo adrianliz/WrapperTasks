@@ -1,3 +1,8 @@
+/*
+  Fake3270Emulator.java
+  09/01/2021
+  @author Adrián Lizaga Isaac
+ */
 package UnityTestSuit;
 
 import domain.Proxy3270Emulator;
@@ -13,11 +18,6 @@ public class Fake3270Emulator implements Proxy3270Emulator {
 	Fake3270Emulator(Response3270 defaultResponse) {
 		this.defaultResponse = defaultResponse;
 		waitScreenFail = false;
-	}
-
-	Fake3270Emulator(boolean waitScreenFail) {
-		this.waitScreenFail = waitScreenFail;
-		defaultResponse = null;
 	}
 
 	@Override

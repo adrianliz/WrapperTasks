@@ -1,3 +1,8 @@
+/*
+  ProxyS3270.java
+  09/01/2021
+  @author Adrián Lizaga Isaac
+ */
 package application;
 
 import domain.Proxy3270Emulator;

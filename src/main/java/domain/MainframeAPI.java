@@ -1,3 +1,8 @@
+/*
+  MainframeAPI.java
+  09/01/2021
+  @authors Adrián Lizaga Isaac, Borja Rando Jarque
+ */
 package domain;
 
 import domain.enums.Job;

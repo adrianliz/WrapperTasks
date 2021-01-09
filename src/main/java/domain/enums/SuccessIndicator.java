@@ -1,3 +1,8 @@
+/*
+  SuccessIndicator.java
+  09/01/2021
+  @authors Adrián Lizaga Isaac, Borja Rando Jarque
+ */
 package domain.enums;
 
 import java.util.regex.Pattern;

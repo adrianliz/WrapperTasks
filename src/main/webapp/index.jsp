@@ -1,3 +1,8 @@
+<!--
+index.jsp
+09/01/2021
+@authors Adrián Lizaga Isaac, Borja Rando Jarque
+-->
 <%@ page contentType="text/html;charset=UTF-8" %>
 
 <%

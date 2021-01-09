@@ -1,3 +1,8 @@
+/*
+  Tasks2Option.java
+  09/01/2021
+  @authors Adrián Lizaga Isaac, Borja Rando Jarque
+ */
 package domain.enums;
 
 public enum Tasks2Option {

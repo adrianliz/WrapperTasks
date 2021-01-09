@@ -1,3 +1,8 @@
+/*
+  ServletExit.java
+  09/01/2021
+  @authors Adrián Lizaga Isaac
+ */
 package infrastructure;
 
 import domain.MainframeAPI;
