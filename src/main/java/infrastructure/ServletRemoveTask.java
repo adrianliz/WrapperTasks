@@ -1,5 +1,5 @@
 /*
-  ServletAddTask.java
+  ServletRemoveTask.java
   09/01/2021
   @author Borja Rando Jarque
  */
