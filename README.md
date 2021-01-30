@@ -31,6 +31,3 @@ Práctica 3 de la asignatura de SL
     9. Listar tareas (v1.8.0) :white_check_mark:
     10. Buscar tareas (v1.9.0) :white_check_mark:
     11. Web (v2.0.0) :white_check_mark:
-    
-# Todoist
-[Lista de tareas](https://todoist.com/app/#project%2F2250526740)
