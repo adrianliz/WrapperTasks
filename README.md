@@ -1,5 +1,5 @@
 # WrapperTasks
-Práctica 3 de la asignatura de SL
+Práctica 3 de la asignatura de Sistemas Legados
 
 # Autores
 - Borja Rando
